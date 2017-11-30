@@ -4,6 +4,7 @@ import { defaultTo, isFunction, noop } from 'lodash/fp'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { noStorage } from './noStorage'
+import { windowAnimationFrameRenderer } from './animationFrameRenderer'
 
 export const COMPONENT = Symbol('Component')
 
@@ -43,7 +44,8 @@ export const component = (componentId, View, reducerOrReducerCreator, subscripti
     const preloadedState = defaultTo(undefined, storage && storage.getItem(this.storageKey))
     this.store = createStore(reducer, preloadedState && JSON.parse(preloadedState), effectiveStoreEnhancer(this.context.store, componentId))
     subscriptions(this.store.dispatch)
-    this.unsubscribe = this.store.subscribe(() => this.forceUpdate())
+    const render = this.forceUpdate.bind(this)
+    this.unsubscribe = this.store.subscribe(windowAnimationFrameRenderer(render))
   }
 
   componentWillUnmount() {
