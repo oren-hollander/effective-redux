@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { compose } from 'lodash/fp'
 import { Button } from '../ui/button'
 import { TextInput } from '../ui/textInput'
@@ -30,10 +30,12 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
     <Counter color='blue' onChange={setColor}/> 
     <Counter color='green' onChange={setColor}/> 
     {
-      ((count > 3 && count < 5) || count > 7) && <Counter color={randomColor()} onChange={setColor}/>
+      ((count > 3 && count < 5) || count > 7) && 
+      <Fragment>
+          <Counter color={randomColor()} onChange={setColor}/>
+          <SessionCounter color='orange' onChange={setColor}/>
+      </Fragment>    
     }
-    {
-      ((count > 3 && count < 5) || count > 7) && <SessionCounter color='orange' onChange={setColor}/>
-    }
+
   </div>
 }
