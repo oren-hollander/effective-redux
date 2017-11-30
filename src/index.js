@@ -8,8 +8,7 @@ import { application } from './effective/application'
 
 const AppWithProps = mapStateToProps({count: selectCount, color: selectColor})(App)
 
-application('root', AppWithProps, reducer, dispatch => {
-  setInterval(() => dispatch(asyncInc()), 20000)
-})
+const subscriptions = dispatch => setInterval(() => dispatch(asyncInc()), 20000)
 
+application('root', AppWithProps, reducer, subscriptions, window.sessionStorage)
 registerServiceWorker()

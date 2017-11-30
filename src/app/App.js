@@ -36,6 +36,5 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
           <SessionCounter color='orange' onChange={setColor}/>
       </Fragment>    
     }
-
   </div>
 }
