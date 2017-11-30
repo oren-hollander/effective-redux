@@ -1,32 +1,15 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
 import registerServiceWorker from './registerServiceWorker'
-import { createStore } from 'redux'
-import { effectiveStoreEnhancer } from './effective/effectiveStoreEnhancer'
-import { mapStateToProps, Provider } from './effective/effective'
-import { windowAnimationFrameRenderer } from './effective/animationFrameRenderer'
+import { mapStateToProps } from './effective/effective'
 import { App } from './app/App'
 import { reducer } from './app/reducer'
 import { selectCount, selectColor } from './app/selectors'
-import { inc } from './app/actions'
-
-const store = createStore(reducer, effectiveStoreEnhancer())
+import { asyncInc } from './app/actions'
+import { application } from './effective/application'
 
 const AppWithProps = mapStateToProps({count: selectCount, color: selectColor})(App)
 
-const render = () => ReactDOM.render(
-  <Provider store={store}>
-    <AppWithProps/>
-  </Provider>, 
-  document.getElementById('root')
-)
-
-store.subscribe(windowAnimationFrameRenderer(render))
-
-render()
-
-setInterval(() => {
-  store.dispatch(inc())
-}, 20000)
+application('root', AppWithProps, reducer, dispatch => {
+  setInterval(() => dispatch(asyncInc()), 20000)
+})
 
 registerServiceWorker()

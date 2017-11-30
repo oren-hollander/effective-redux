@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { object } from 'prop-types'
-import { mapValues, identity, defaultTo } from 'lodash/fp'
+import { defaultTo, isFunction } from 'lodash/fp'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 
@@ -14,7 +14,7 @@ const randomIdGenerator = (prefix) => {
   }
 }
 
-export const component = (componentId, View, reducerCreator, stateToProps = {state: identity}) => storage => class Comp extends Component {
+export const component = (componentId, View, reducerOrReducerCreator, subscriptions) => storage => class Comp extends Component {
 
   static contextTypes = {
     store: object
@@ -35,8 +35,13 @@ export const component = (componentId, View, reducerCreator, stateToProps = {sta
   storageKey = `effective-component-state-${componentId.toString()}`
 
   componentWillMount() {
+    const reducer = isFunction(reducerOrReducerCreator) 
+      ? reducerOrReducerCreator(() => this.props) 
+      : reducerOrReducerCreator
+    
     const preloadedState = defaultTo(undefined, storage && storage.getItem(this.storageKey))
-    this.store = createStore(reducerCreator(() => this.props), preloadedState && JSON.parse(preloadedState), effectiveStoreEnhancer(this.context.store, componentId))
+    this.store = createStore(reducer, preloadedState && JSON.parse(preloadedState), effectiveStoreEnhancer(this.context.store, componentId))
+    subscriptions(this.store.dispatch)
     this.unsubscribe = this.store.subscribe(() => this.forceUpdate())
   }
 
@@ -54,8 +59,6 @@ export const component = (componentId, View, reducerCreator, stateToProps = {sta
   }
 
   render(){
-    const state = this.store.getState()
-    const props = mapValues(selector => selector(state), stateToProps)
-    return <View {...props} {...this.props}/>
+    return <View {...this.props}/>
   }
 }

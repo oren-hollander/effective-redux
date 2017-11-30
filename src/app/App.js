@@ -3,7 +3,6 @@ import { compose } from 'lodash/fp'
 import { Button } from '../ui/button'
 import { TextInput } from '../ui/textInput'
 import { inc, asyncInc, setCount, setColor } from './actions'
-import { emitting } from '../effective/effective'
 import { counter, Counter } from '../components/counter'
 
 const SessionCounter = counter(window.sessionStorage)
@@ -19,7 +18,7 @@ const stringToInt = str => {
   return Number.isNaN(num) ? 0 : num
 }
 
-export const App = emitting(({count, color, emit, installComponentReducer, uninstallComponentReducer}) => {
+export const App = ({count, color, installComponentReducer, uninstallComponentReducer}) => {
  return <div>
     <div>
       {count}
@@ -37,4 +36,4 @@ export const App = emitting(({count, color, emit, installComponentReducer, unins
       ((count > 3 && count < 5) || count > 7) && <SessionCounter color='orange' onChange={setColor}/>
     }
   </div>
-})
+}

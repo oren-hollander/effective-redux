@@ -1,8 +1,8 @@
 import React  from 'react'
-import { emitting } from '../effective/effective'
+import { dispatching } from '../effective/effective'
 
-export const TextInput = emitting(
-  ({value, onChange, emit}) => {
-    return <input type='text' value={value} onChange={e => emit(onChange(e.target.value))}/>
+export const TextInput = dispatching (
+  ({value, onChange, dispatch}) => {
+    return <input type='text' value={value} onChange={e => dispatch(onChange(e.target.value))}/>
   }
 )

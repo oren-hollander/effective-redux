@@ -3,6 +3,7 @@ import { identity, delay as _delay } from 'lodash/fp'
 import { Button } from '../ui/button'
 import { component, COMPONENT } from '../effective/component'
 import { effect } from '../effective/effectiveStoreEnhancer'
+import { mapStateToProps } from '../effective/effective'
 
 export const COUNTER = Symbol('Counter')
 
@@ -47,7 +48,12 @@ export const CounterView = ({count, color, onChange}) =>
     <span>{count}</span>
     <Button color={color} onClick={dec}>-</Button>
     <Button color={color} onClick={inc}>+</Button>
-    </div>
+  </div>
 
-export const counter = component(COUNTER, CounterView, reducer, { count: identity })
+export const CounterViewWithProps = mapStateToProps({count: identity})(CounterView)
+
+export const counter = component(COUNTER, CounterViewWithProps, reducer, dispatch => {
+  setInterval(() => dispatch(inc()), 10000)
+})
+
 export const Counter = counter()

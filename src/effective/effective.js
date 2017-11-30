@@ -9,9 +9,9 @@ export const Provider = withContext({ store: object }, ({ store }) => ({ store }
   OnlyChild
 )
 
-export const emitting = compose(
+export const dispatching = compose(
   getContext({store: object}),
-  withProps(({store}) => ({emit: store.dispatch}))
+  withProps(({store}) => ({dispatch: store.dispatch}))
 )
 
 export const mapStateToProps = selectors => compose(

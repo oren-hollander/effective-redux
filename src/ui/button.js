@@ -1,6 +1,6 @@
 import React  from 'react'
-import { emitting } from '../effective/effective'
+import { dispatching } from '../effective/effective'
 
-export const Button = emitting(
-  ({color, onClick, children, emit}) => <button style={{borderColor: color, borderWidth: 3}} onClick={() => emit(onClick())}>{children}</button>
+export const Button = dispatching (
+  ({color, onClick, children, dispatch}) => <button style={{borderColor: color, borderWidth: 3}} onClick={() => dispatch(onClick())}>{children}</button>
 )
