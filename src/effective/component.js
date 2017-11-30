@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { func, object, string } from 'prop-types'
+import { object } from 'prop-types'
 import { mapValues, identity, defaultTo } from 'lodash/fp'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
@@ -14,20 +14,14 @@ const randomIdGenerator = (prefix) => {
   }
 }
 
-export const component = (componentId, View, reducerCreator, mapStateToProps = {state: identity}) => storage => class Comp extends Component {
-  static propTypes = {
-    ciid: string
-  }
+export const component = (componentId, View, reducerCreator, stateToProps = {state: identity}) => storage => class Comp extends Component {
 
   static contextTypes = {
-    emit: func,
-    store: object,
-    installComponentReducer: func,
-    uninstallComponentReducer: func
+    store: object
   }
 
   static childContextTypes = {
-    emit: func
+    store: object
   }
 
   static COMPONENT_ACTION = 'component-action'
@@ -55,13 +49,13 @@ export const component = (componentId, View, reducerCreator, mapStateToProps = {
 
   getChildContext() {
     return {
-      emit: this.store.dispatch
+      store: this.store
     }
   }
 
   render(){
     const state = this.store.getState()
-    const props = mapValues(selector => selector(state), mapStateToProps)
+    const props = mapValues(selector => selector(state), stateToProps)
     return <View {...props} {...this.props}/>
   }
 }
