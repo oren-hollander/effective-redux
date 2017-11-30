@@ -52,8 +52,8 @@ export const CounterView = ({count, color, onChange}) =>
 
 export const CounterViewWithProps = mapStateToProps({count: identity})(CounterView)
 
-export const counter = component(COUNTER, CounterViewWithProps, reducer, dispatch => {
-  setInterval(() => dispatch(inc()), 10000)
-})
+const subscriptions = dispatch => setInterval(() => dispatch(inc()), 10000)
 
-export const Counter = counter()
+export const counterWithStorage = storage => component(COUNTER, CounterViewWithProps, reducer, subscriptions, storage)
+
+export const Counter = component(COUNTER, CounterViewWithProps, reducer, subscriptions)

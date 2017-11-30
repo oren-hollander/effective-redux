@@ -5,11 +5,7 @@ import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { Provider } from './effective'
 import { windowAnimationFrameRenderer } from './animationFrameRenderer'
 import { noop, defaultTo, isUndefined } from 'lodash/fp'
-
-const noStorage = {
-  getItem: noop,
-  setItem: noop
-}
+import { noStorage } from './noStorage'
 
 const storageKey = 'effective/app'
 

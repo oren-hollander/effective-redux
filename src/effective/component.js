@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { object } from 'prop-types'
-import { defaultTo, isFunction } from 'lodash/fp'
+import { defaultTo, isFunction, noop } from 'lodash/fp'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
+import { noStorage } from './noStorage'
 
 export const COMPONENT = Symbol('Component')
 
@@ -14,7 +15,7 @@ const randomIdGenerator = (prefix) => {
   }
 }
 
-export const component = (componentId, View, reducerOrReducerCreator, subscriptions) => storage => class Comp extends Component {
+export const component = (componentId, View, reducerOrReducerCreator, subscriptions = noop, storage = noStorage) => class Comp extends Component {
 
   static contextTypes = {
     store: object

@@ -3,9 +3,9 @@ import { compose } from 'lodash/fp'
 import { Button } from '../ui/button'
 import { TextInput } from '../ui/textInput'
 import { inc, asyncInc, setCount, setColor } from './actions'
-import { counter, Counter } from '../components/counter'
+import { counterWithStorage, Counter } from '../components/counter'
 
-const SessionCounter = counter(window.sessionStorage)
+const SessionCounter = counterWithStorage(window.sessionStorage)
 
 const randomColor = () => {
   const colors = ['red', 'green', 'blue', 'orange']
