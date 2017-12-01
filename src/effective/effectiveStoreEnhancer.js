@@ -1,5 +1,5 @@
 import { curry, map, reduce, toPairs, isEmpty, compose } from 'lodash/fp'
-import { COMPONENT } from './component';
+import { Fragment } from './fragment';
 import { lift, liftArrow } from '../util/lift'
 import { flip } from '../util/flip'
 
@@ -21,7 +21,7 @@ const apply = value => f => f(value)
 
 export const effect = (state, asyncAction) => makeEffect(state, [asyncAction])
 
-export const effectiveStoreEnhancer = (parentStore, componentId) => nextStoreCreator => (reducer, preloadedState) => {
+export const effectiveStoreEnhancer = (parentStore, fragmentId) => nextStoreCreator => (reducer, preloadedState) => {
 
   const effectReducer = reducer => (state, action) => {
     const effect = liftEffect(reducer(state, action))
@@ -36,8 +36,8 @@ export const effectiveStoreEnhancer = (parentStore, componentId) => nextStoreCre
   
   const dispatch = actionOrActionCreator => {
     const action = liftArrow(actionOrActionCreator)()
-    if(parentStore && componentId){
-      if(action[COMPONENT] === componentId){
+    if(parentStore && fragmentId){
+      if(action[Fragment] === fragmentId){
         return store.dispatch(action)
       }
       else {

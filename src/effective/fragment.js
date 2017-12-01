@@ -6,9 +6,9 @@ import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { noStorage } from './noStorage'
 import { windowAnimationFrameRenderer } from './animationFrameRenderer'
 
-export const COMPONENT = Symbol('Component')
+export const Fragment = Symbol('Fragment')
 
-export const component = (componentId, View, reducerOrReducerCreator, subscriptions = noop, storage = noStorage) => class Comp extends Component {
+export const fragment = (fragmentId, View, reducerOrReducerCreator, subscriptions = noop, storage = noStorage) => class Comp extends Component {
 
   static contextTypes = {
     store: object
@@ -18,7 +18,7 @@ export const component = (componentId, View, reducerOrReducerCreator, subscripti
     store: object
   }
 
-  storageKey = `effective/component/${componentId.toString()}`
+  storageKey = `effective/fragment/${fragmentId.toString()}`
 
   componentWillMount() {
     const reducer = isFunction(reducerOrReducerCreator) 
@@ -26,7 +26,7 @@ export const component = (componentId, View, reducerOrReducerCreator, subscripti
       : reducerOrReducerCreator
     
     const preloadedState = defaultTo(undefined, storage && storage.getItem(this.storageKey))
-    this.store = createStore(reducer, preloadedState && JSON.parse(preloadedState), effectiveStoreEnhancer(this.context.store, componentId))
+    this.store = createStore(reducer, preloadedState && JSON.parse(preloadedState), effectiveStoreEnhancer(this.context.store, fragmentId))
     subscriptions(this.store.dispatch)
     const render = this.forceUpdate.bind(this)
     this.unsubscribe = this.store.subscribe(windowAnimationFrameRenderer(render))
