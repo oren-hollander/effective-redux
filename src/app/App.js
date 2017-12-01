@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
-import { compose } from 'lodash/fp'
+import { compose, defaultTo } from 'lodash/fp'
 import { Button } from '../ui/button'
-import { TextInput, TextInput2 } from '../ui/textInput'
+import { TextInput } from '../ui/textInput'
 import { inc, asyncInc, setCount, setColor } from './actions'
 import { counterWithStorage, Counter } from '../components/counter'
 
@@ -13,19 +13,18 @@ const randomColor = () => {
   return colors[i]
 }
 
-const stringToInt = str => {
-  const num = Number.parseInt(str, 10)
-  return Number.isNaN(num) ? 0 : num
-}
+const stringToInt = str => defaultTo(0, Number.parseInt(str, 10))
+
+const intToString = int => Number(int).toString()
 
 export const App = ({count, color, installComponentReducer, uninstallComponentReducer}) => {
- return <div>
+  return <div>
     <div>
       {count}
     </div>
     <Button onClick={inc}>Increase</Button>
     <Button onClick={asyncInc}>Increase Async</Button>
-    <TextInput2 value={count} onChange={compose(setCount, stringToInt)}/>
+    <TextInput value={intToString(count)} onChange={compose(setCount, stringToInt)}/>
     <div style={{backgroundColor: color}}>Color</div>
     <Counter color='blue' onChange={setColor}/> 
     <Counter color='green' onChange={setColor}/> 
@@ -36,6 +35,5 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
           <SessionCounter color='orange' onChange={setColor}/>
       </Fragment>    
     }
-    <TextInput2/>    
   </div>
 }
