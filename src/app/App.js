@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { compose } from 'lodash/fp'
 import { Button } from '../ui/button'
-import { TextInput } from '../ui/textInput'
+import { TextInput, TextInput2 } from '../ui/textInput'
 import { inc, asyncInc, setCount, setColor } from './actions'
 import { counterWithStorage, Counter } from '../components/counter'
 
@@ -25,7 +25,7 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
     </div>
     <Button onClick={inc}>Increase</Button>
     <Button onClick={asyncInc}>Increase Async</Button>
-    <TextInput value={count} onChange={compose(setCount, stringToInt)}/>
+    <TextInput2 value={count} onChange={compose(setCount, stringToInt)}/>
     <div style={{backgroundColor: color}}>Color</div>
     <Counter color='blue' onChange={setColor}/> 
     <Counter color='green' onChange={setColor}/> 
@@ -36,5 +36,6 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
           <SessionCounter color='orange' onChange={setColor}/>
       </Fragment>    
     }
+    <TextInput2/>    
   </div>
 }

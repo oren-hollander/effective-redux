@@ -1,21 +1,21 @@
-import { map, reduce, toPairs, isEmpty, mapValues } from 'lodash/fp'
+import { curry, map, reduce, toPairs, isEmpty, compose } from 'lodash/fp'
 import { COMPONENT } from './component';
-
-const mapKeysValues = mapValues.convert({cap: false})
+import { lift, liftArrow } from '../util/lift'
+import { flip } from '../util/flip'
 
 const Effect = Symbol('Effect')
 
-const makeEffect = (state, asyncActions) => ({
+const makeEffect = curry((state, actions) => ({
   [Effect]: true,
   state, 
-  asyncActions
-})
+  actions
+}))
 
 const noEffect = makeEffect({}, [])
 
 const isEffect = value => value[Effect]
 
-const ensureEffect = value => isEffect(value) ? value : makeEffect(value, [])
+const liftEffect = lift(isEffect, flip(makeEffect)([]))
 
 const apply = value => f => f(value)
 
@@ -24,19 +24,18 @@ export const effect = (state, asyncAction) => makeEffect(state, [asyncAction])
 export const effectiveStoreEnhancer = (parentStore, componentId) => nextStoreCreator => (reducer, preloadedState) => {
 
   const effectReducer = reducer => (state, action) => {
-    const effect = ensureEffect(reducer(state, action))
+    const effect = liftEffect(reducer(state, action))
     
-     if(!isEmpty(effect.asyncActions)) { // todo check if needed to test for emptyness
-       Promise.all(map(apply(store.getState), effect.asyncActions))
-         .then(actions => {
-           return map(dispatch, actions)
-        })
+     if(!isEmpty(store)) { 
+      Promise.all(map(compose(applyGetState, liftArrow), effect.actions))
+         .then(map(dispatch))
      }
   
      return effect.state
   } 
   
-  const dispatch = action => {
+  const dispatch = actionOrActionCreator => {
+    const action = liftArrow(actionOrActionCreator)()
     if(parentStore && componentId){
       if(action[COMPONENT] === componentId){
         return store.dispatch(action)
@@ -51,7 +50,8 @@ export const effectiveStoreEnhancer = (parentStore, componentId) => nextStoreCre
   }
 
   const store = nextStoreCreator(effectReducer(reducer), preloadedState)
-
+  const applyGetState = apply(store.getState)
+  
   return { 
     ...store, 
     dispatch,
@@ -61,26 +61,6 @@ export const effectiveStoreEnhancer = (parentStore, componentId) => nextStoreCre
 
 export const combineReducers = reducers => (state, action) => 
   reduce((effects, [key, reducer]) => {
-    const effect = ensureEffect(reducer(state && state[key], action))
-    return makeEffect({...effects.state, [key]: effect.state}, [...effects.asyncActions, ...effect.asyncActions])
+    const effect = liftEffect(reducer(state && state[key], action))
+    return makeEffect({...effects.state, [key]: effect.state}, [...effects.actions, ...effect.actions])
   }, noEffect, toPairs(reducers)) 
-
-
-export const combineComponentReducers = reducers => (state, action) => {
-  switch(action.type){
-    case '@@redux/INIT':
-      return mapKeysValues((reducer, ciid) => { 
-        return reducer(state[ciid], action)
-      }, reducers)
-
-    case 'component-action':
-      const result = ensureEffect(reducers[action.ciid](state[action.ciid], action.action))
-      return makeEffect({ 
-        ...state, 
-        [action.ciid]: result.state 
-      }, result.asyncActions)
-
-    default: 
-      return state
-  }
-}

@@ -8,14 +8,6 @@ import { windowAnimationFrameRenderer } from './animationFrameRenderer'
 
 export const COMPONENT = Symbol('Component')
 
-const randomIdGenerator = (prefix) => {
-  let counter = 0
-  return () => {
-    counter++
-    return prefix + counter
-  }
-}
-
 export const component = (componentId, View, reducerOrReducerCreator, subscriptions = noop, storage = noStorage) => class Comp extends Component {
 
   static contextTypes = {
@@ -26,15 +18,7 @@ export const component = (componentId, View, reducerOrReducerCreator, subscripti
     store: object
   }
 
-  static COMPONENT_ACTION = 'component-action'
-
-  static componentAction(action, ciid) {
-    return { type: Comp.COMPONENT_ACTION, action, ciid }
-  } 
-
-  static nextRandomComponentId = randomIdGenerator('comp_id_')
-
-  storageKey = `effective-component-state-${componentId.toString()}`
+  storageKey = `effective/component/${componentId.toString()}`
 
   componentWillMount() {
     const reducer = isFunction(reducerOrReducerCreator) 

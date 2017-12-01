@@ -4,6 +4,7 @@ import { Button } from '../ui/button'
 import { component, COMPONENT } from '../effective/component'
 import { effect } from '../effective/effectiveStoreEnhancer'
 import { mapStateToProps } from '../effective/effective'
+import { dispatching } from '../effective/effective'
 
 export const COUNTER = Symbol('Counter')
 
@@ -30,7 +31,7 @@ export const reducer = getProps => (count = 9, action) => {
 
   switch(action.type){
     case DEC: 
-      return effect(count - 1, async () => onChange(color))
+      return effect(count - 1, onChange(color))
     
     case INC: 
       return effect(count, incAsync)
@@ -43,12 +44,15 @@ export const reducer = getProps => (count = 9, action) => {
   }
 }
 
-export const CounterView = ({count, color, onChange}) => 
+export const CounterView = dispatching(({count, color, onChange, dispatch}) => 
   <div>
     <span>{count}</span>
     <Button color={color} onClick={dec}>-</Button>
     <Button color={color} onClick={inc}>+</Button>
-  </div>
+    <button onClick={() => dispatch(inc)}> 100 </button>
+
+  </div> 
+)
 
 export const CounterViewWithProps = mapStateToProps({count: identity})(CounterView)
 
