@@ -10,8 +10,4 @@ const AppWithProps = mapStateToProps({count: selectCount, color: selectColor})(A
 const subscriptions = dispatch => setInterval(() => dispatch(asyncInc()), 20000)
 application('root', AppWithProps, reducer, subscriptions, window.sessionStorage)
 
-// import { main } from './starWars/app'
-
-// main('root')
-
 registerServiceWorker()

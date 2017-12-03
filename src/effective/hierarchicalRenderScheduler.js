@@ -13,11 +13,9 @@ export const hierarchicalRenderScheduler = requestAnimationFrame => {
   resetSchedule()
   
   return (fragmentPath, render) => {
-    console.log(fragmentPath)
     tree = schedule(renderNode(fragmentPath, render), tree)
     if(!animationFrameRequested){
-      requestAnimationFrame(() => {
-        console.log(tree)
+      requestAnimationFrame(ms => {
         forEach(node => node.render(), tree)
         resetSchedule()
       })

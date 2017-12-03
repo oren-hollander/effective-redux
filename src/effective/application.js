@@ -3,7 +3,6 @@ import { render, unmountComponentAtNode } from 'react-dom'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { Provider } from './effective'
-import { windowAnimationFrameRenderer } from './animationFrameRenderer'
 import { noop, defaultTo, isUndefined } from 'lodash/fp'
 import { noStorage } from './noStorage'
 import { hierarchicalRenderScheduler } from './hierarchicalRenderScheduler'
@@ -31,9 +30,8 @@ export const application = (rootElementId, View, reducer, subscriptions = noop, 
   }
   
   subscriptions(store.dispatch)
-  store.subscribe(windowAnimationFrameRenderer(renderApp)) 
-  // store.subscribe(() => {
-    // scheduleRender('app', renderApp)
-  // })
+  store.subscribe(() => {
+    scheduleRender('app', renderApp)
+  })
   renderApp()
 }
