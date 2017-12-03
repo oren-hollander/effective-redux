@@ -1,14 +1,15 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { object } from 'prop-types'
 import { defaultTo, isFunction, noop } from 'lodash/fp'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { noStorage } from './noStorage'
 import { windowAnimationFrameRenderer } from './animationFrameRenderer'
+import { pure } from 'recompose'
 
 export const Fragment = Symbol('Fragment')
 
-export const fragment = (fragmentId, View, reducerOrReducerCreator, subscriptions = noop, storage = noStorage) => class Comp extends Component {
+export const fragment = (fragmentId, View, reducerOrReducerCreator, subscriptions = noop, storage = noStorage) => class Comp extends PureComponent {
 
   static contextTypes = {
     store: object
