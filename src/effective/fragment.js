@@ -9,7 +9,7 @@ import { pure } from 'recompose'
 
 export const Fragment = Symbol('Fragment')
 
-export const fragment = (fragmentId, View, reducerOrReducerCreator, subscriptions = noop, storage = noStorage) => class Comp extends PureComponent {
+export const fragment = (fragmentId, View, reducer, subscriptions = noop, storage = noStorage) => class Comp extends PureComponent {
 
   static contextTypes = {
     store: object
@@ -22,12 +22,8 @@ export const fragment = (fragmentId, View, reducerOrReducerCreator, subscription
   storageKey = `effective/fragment/${fragmentId.toString()}`
 
   componentWillMount() {
-    const reducer = isFunction(reducerOrReducerCreator) 
-      ? reducerOrReducerCreator(() => this.props) 
-      : reducerOrReducerCreator
-    
     const preloadedState = defaultTo(undefined, storage && storage.getItem(this.storageKey))
-    this.store = createStore(reducer, preloadedState && JSON.parse(preloadedState), effectiveStoreEnhancer(this.context.store, fragmentId))
+    this.store = createStore(reducer, preloadedState && JSON.parse(preloadedState), effectiveStoreEnhancer(this.context.store, fragmentId, () => this.props))
     subscriptions(this.store.dispatch)
     const render = this.forceUpdate.bind(this)
     this.unsubscribe = this.store.subscribe(windowAnimationFrameRenderer(render))

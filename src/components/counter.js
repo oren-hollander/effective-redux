@@ -22,8 +22,8 @@ const setCount = count => ({ type: SET_COUNT, [Fragment]: COUNTER, count })
 // const incAsync = getState => delay(1000).then(() => setCount(getState() + 1))
 const incAsync = getState => setCount(getState() + 1)
 
-export const reducer = getProps => (count = 9, action) => {
-  const { onChange, color } = getProps()
+export const reducer =  (count = 9, action, {onChange, color}) => {
+  // const { onChange, color } = getProps()
 
   switch(action.type){
     case DEC: 

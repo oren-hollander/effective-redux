@@ -1,4 +1,4 @@
-import { curry, map, reduce, toPairs, isEmpty, compose } from 'lodash/fp'
+import { curry, map, reduce, toPairs, isEmpty, compose, constant } from 'lodash/fp'
 import { Fragment } from './fragment';
 import { lift, liftArrow } from '../util/lift'
 import { flip } from '../util/flip'
@@ -21,10 +21,10 @@ const apply = value => f => f(value)
 
 export const effect = (state, asyncAction) => makeEffect(state, [asyncAction])
 
-export const effectiveStoreEnhancer = (parentStore, fragmentId) => nextStoreCreator => (reducer, preloadedState) => {
+export const effectiveStoreEnhancer = (parentStore, fragmentId, propsGetter = constant({})) => nextStoreCreator => (reducer, preloadedState) => {
 
   const effectReducer = reducer => (state, action) => {
-    const effect = liftEffect(reducer(state, action))
+    const effect = liftEffect(reducer(state, action, propsGetter()))
     
      if(!isEmpty(store)) { 
       Promise.all(map(compose(applyGetState, liftArrow), effect.actions))
