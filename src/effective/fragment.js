@@ -1,25 +1,31 @@
 import React, { PureComponent } from 'react'
-import { object } from 'prop-types'
-import { defaultTo, isFunction, noop } from 'lodash/fp'
+import { object, func, string } from 'prop-types'
+import { defaultTo, noop } from 'lodash/fp'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { noStorage } from './noStorage'
 import { windowAnimationFrameRenderer } from './animationFrameRenderer'
-import { pure } from 'recompose'
 
 export const Fragment = Symbol('Fragment')
 
 export const fragment = (fragmentId, View, reducer, subscriptions = noop, storage = noStorage) => class Comp extends PureComponent {
 
   static contextTypes = {
-    store: object
+    store: object,
+    scheduleRender: func,
+    fragmentPath: string
   }
 
   static childContextTypes = {
-    store: object
+    store: object, 
+    fragmentPath: string
   }
 
   storageKey = `effective/fragment/${fragmentId.toString()}`
+
+  fragmentPath() {
+    return `${this.context.fragmentPath}.${fragmentId.toString()}`
+  }
 
   componentWillMount() {
     const preloadedState = defaultTo(undefined, storage && storage.getItem(this.storageKey))
@@ -27,6 +33,10 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop, storag
     subscriptions(this.store.dispatch)
     const render = this.forceUpdate.bind(this)
     this.unsubscribe = this.store.subscribe(windowAnimationFrameRenderer(render))
+    // this.unsubscribe = this.store.subscribe(() => {
+    //   const s = this.store.getState()
+    //   this.context.scheduleRender(this.fragmentPath(), render)
+    // })
   }
 
   componentWillUnmount() {
@@ -38,7 +48,8 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop, storag
 
   getChildContext() {
     return {
-      store: this.store
+      store: this.store,
+      fragmentPath: this.fragmentPath()
     }
   }
 

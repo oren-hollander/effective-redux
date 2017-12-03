@@ -8,7 +8,7 @@ import { application } from './effective/application'
 
 const AppWithProps = mapStateToProps({count: selectCount, color: selectColor})(App)
 const subscriptions = dispatch => setInterval(() => dispatch(asyncInc()), 20000)
-application('root', AppWithProps, reducer, undefined, window.sessionStorage)
+application('root', AppWithProps, reducer, subscriptions, window.sessionStorage)
 
 // import { main } from './starWars/app'
 

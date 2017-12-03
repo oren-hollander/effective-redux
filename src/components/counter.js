@@ -19,21 +19,20 @@ const inc = () => ({ type: INC, [Fragment]: COUNTER })
 const SET_COUNT = 'counter/set-count'
 const setCount = count => ({ type: SET_COUNT, [Fragment]: COUNTER, count })
 
-// const incAsync = getState => delay(1000).then(() => setCount(getState() + 1))
-const incAsync = getState => setCount(getState() + 1)
+const incAsync = getState => delay(1000).then(() => setCount(getState() + 1))
+// const incAsync = getState => setCount(getState() + 1)
 
 export const reducer =  (count = 9, action, {onChange, color}) => {
-  // const { onChange, color } = getProps()
 
   switch(action.type){
     case DEC: 
       return effect(count - 1, onChange(color))
     
     case INC: 
-      return effect(count, incAsync)
+      return effect(count, [incAsync, onChange(color)])
   
     case SET_COUNT:
-      return effect(action.count, onChange('red'))
+      return action.count
     
     default: 
       return count
@@ -41,7 +40,6 @@ export const reducer =  (count = 9, action, {onChange, color}) => {
 }
 
 export const CounterView = dispatching(({count, color, onChange, dispatch}) => {
-  console.log('render counter')
   return <div>
     <span>{count}</span>
     <Button color={color} onClick={dec}>-</Button>
@@ -55,4 +53,4 @@ const subscriptions = dispatch => setInterval(() => dispatch(inc()), 10000)
 
 export const counterWithStorage = storage => fragment(COUNTER, CounterViewWithProps, reducer, undefined, storage)
 
-export const Counter = fragment(COUNTER, CounterViewWithProps, reducer, undefined)
+export const Counter = fragment(COUNTER, CounterViewWithProps, reducer, subscriptions)

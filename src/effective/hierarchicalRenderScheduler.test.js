@@ -1,4 +1,4 @@
-import { hierarchicalRenderer } from './hierachicalRenderer'
+import { hierarchicalRenderScheduler } from './hierarchicalRenderScheduler'
 import { forEach } from 'lodash/fp'
 
 const makeTestRequestAnimationFrame = () => {
@@ -17,15 +17,15 @@ const makeTestRequestAnimationFrame = () => {
   return [requestAnimationFrame, fireAnimationFrame]
 }
 
-test('hierarchicalRenderer', done => {
+test('hierarchicalRenderer', () => {
 
-  const [requestAnimationFrame, fireAnimationFrame] = makeTestRequestAnimationFrame()
+  // const [requestAnimationFrame, fireAnimationFrame] = makeTestRequestAnimationFrame()
   
-  const hr = hierarchicalRenderer(requestAnimationFrame)
+  // const hr = hierarchicalRenderer(requestAnimationFrame)
   
-  hr.schedule('fragment-1')
-    .then(done)
-    .catch(done.fail)
+  // hr.schedule('fragment-1')
+  //   .then(done)
+  //   .catch(done.fail)
 
-  fireAnimationFrame()
+  // fireAnimationFrame()
 })

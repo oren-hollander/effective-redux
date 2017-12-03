@@ -1,11 +1,15 @@
 import { Children } from 'react'
 import { withContext, getContext, withProps, compose } from 'recompose'
 import { mapValues } from 'lodash/fp'
-import { object } from 'prop-types'
+import { object, func, string } from 'prop-types'
 
 const OnlyChild = ({children}) => Children.only(children)
 
-export const Provider = withContext({ store: object }, ({ store }) => ({ store }))(
+export const Provider = withContext({ 
+  store: object,
+  scheduleRender: func,
+  fragmentPath: string
+  }, ({ store, scheduleRender, fragmentPath }) => ({ store, scheduleRender, fragmentPath }))(
   OnlyChild
 )
 

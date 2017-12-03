@@ -1,6 +1,6 @@
 import { curry, map, reduce, toPairs, isEmpty, compose, constant } from 'lodash/fp'
 import { Fragment } from './fragment';
-import { lift, liftArrow } from '../util/lift'
+import { lift, liftArrow, liftArray } from '../util/lift'
 import { flip } from '../util/flip'
 
 const Effect = Symbol('Effect')
@@ -19,11 +19,11 @@ const liftEffect = lift(isEffect, flip(makeEffect)([]))
 
 const apply = value => f => f(value)
 
-export const effect = (state, asyncAction) => makeEffect(state, [asyncAction])
+export const effect = (state, asyncActions) => makeEffect(state, liftArray(asyncActions))
 
 export const effectiveStoreEnhancer = (parentStore, fragmentId, propsGetter = constant({})) => nextStoreCreator => (reducer, preloadedState) => {
 
-  const effectReducer = reducer => (state, action) => {
+  const effectReducer = reducer => (state, action) => {    
     const effect = liftEffect(reducer(state, action, propsGetter()))
     
      if(!isEmpty(store)) { 

@@ -6,6 +6,7 @@ import { Provider } from './effective'
 import { windowAnimationFrameRenderer } from './animationFrameRenderer'
 import { noop, defaultTo, isUndefined } from 'lodash/fp'
 import { noStorage } from './noStorage'
+import { hierarchicalRenderScheduler } from './hierarchicalRenderScheduler'
 
 const storageKey = 'effective/app'
 
@@ -15,9 +16,10 @@ export const application = (rootElementId, View, reducer, subscriptions = noop, 
 
   const store = createStore(reducer, preloadedState, effectiveStoreEnhancer())
   const rootElement = document.getElementById(rootElementId)
+  const scheduleRender = hierarchicalRenderScheduler(window.requestAnimationFrame)
 
   const renderApp = () => render (
-    <Provider store={store}>
+    <Provider store={store} scheduleRender={scheduleRender} fragmentPath='app'>
       <View/>
     </Provider>, 
     rootElement
@@ -29,6 +31,9 @@ export const application = (rootElementId, View, reducer, subscriptions = noop, 
   }
   
   subscriptions(store.dispatch)
-  store.subscribe(windowAnimationFrameRenderer(renderApp))
+  store.subscribe(windowAnimationFrameRenderer(renderApp)) 
+  // store.subscribe(() => {
+    // scheduleRender('app', renderApp)
+  // })
   renderApp()
 }
