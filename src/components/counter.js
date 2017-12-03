@@ -5,6 +5,7 @@ import { fragment, Fragment } from '../effective/fragment'
 import { effect } from '../effective/effectiveStoreEnhancer'
 import { mapStateToProps } from '../effective/effective'
 import { dispatching } from '../effective/effective'
+import { interval } from '../effective/subscriptions/intervalSubscription'
 
 export const COUNTER = Symbol('Counter')
 
@@ -48,8 +49,6 @@ export const CounterView = dispatching(({count, color, dispatch}) =>
 
 export const CounterViewWithProps = mapStateToProps({count: identity})(CounterView)
 
-const subscriptions = dispatch => setInterval(() => dispatch(inc()), 10000)
-
-export const counterWithStorage = storage => fragment(COUNTER, CounterViewWithProps, reducer, subscriptions, storage)
+const subscriptions = interval(30000, inc)
 
 export const Counter = fragment(COUNTER, CounterViewWithProps, reducer, subscriptions)

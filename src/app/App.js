@@ -3,9 +3,9 @@ import { compose, defaultTo } from 'lodash/fp'
 import { Button } from '../ui/button'
 import { TextInput } from '../ui/textInput'
 import { inc, asyncInc, setCount, setColor } from './actions'
-import { counterWithStorage, Counter } from '../components/counter'
+import { Counter } from '../components/counter'
 
-const SessionCounter = counterWithStorage(window.sessionStorage)
+// const SessionCounter = counterWithStorage(window.sessionStorage)
 
 const randomColor = () => {
   const colors = ['red', 'green', 'blue', 'orange']
@@ -32,7 +32,7 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
       ((count > 3 && count < 5) || count > 7) && 
       <Fragment>
           <Counter color={randomColor()} onChange={setColor}/>
-          <SessionCounter color='orange' onChange={setColor}/>
+          <Counter color='orange' onChange={setColor}/>
       </Fragment>    
     }
   </div>

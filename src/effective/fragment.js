@@ -1,15 +1,14 @@
 import React, { Component } from 'react'
 import { object, func, string } from 'prop-types'
-import { defaultTo, noop } from 'lodash/fp'
+import { noop } from 'lodash/fp'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
-import { noStorage } from './noStorage'
 import { idGenerator } from '../util/idGenerator'
 import { shallowEqual } from 'recompose'
 
 export const Fragment = Symbol('Fragment')
 
-export const fragment = (fragmentId, View, reducer, subscriptions = noop, storage = noStorage) => class Comp extends Component {
+export const fragment = (fragmentId, View, reducer, subscriptions = noop) => class Comp extends Component {
 
   static contextTypes = {
     store: object,
@@ -26,9 +25,7 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop, storag
   
   componentWillMount() {
     this.fragmentPath = `${this.context.fragmentPath}.${Comp.nextFragmentId()}`
-    this.storageKey = `effective/fragment/${this.fragmentPath}`
-    const preloadedState = defaultTo(undefined, storage && storage.getItem(this.storageKey))
-    this.store = createStore(reducer, preloadedState && JSON.parse(preloadedState), effectiveStoreEnhancer(this.context.store, fragmentId, () => this.props))
+    this.store = createStore(reducer, effectiveStoreEnhancer(this.context.store, fragmentId, () => this.props))
     subscriptions(this.store.dispatch)
     const render = this.forceUpdate.bind(this)
     this.unsubscribe = this.store.subscribe(() => {
@@ -38,9 +35,6 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop, storag
   }
 
   componentWillUnmount() {
-    if(storage){
-      storage.setItem(this.storageKey, JSON.stringify(this.store.getState()))
-    }
     this.unsubscribe()
   }
 
