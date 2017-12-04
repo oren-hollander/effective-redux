@@ -1,9 +1,6 @@
 import { curry, map, reduce, toPairs, isEmpty, compose, constant } from 'lodash/fp'
 import { Fragment } from './fragment';
-import { lift, liftArrow, liftArray, liftPromise } from '../util/lift'
-import { flip } from '../util/flip'
-import { invoke } from '../util/invoke'
-import { mapPromise } from '../util/mapPromise'
+import { flip, invoke, mapPromise, lift, liftArrow, liftArray, liftPromise  } from '../util'
 
 const Effect = Symbol('Effect')
 

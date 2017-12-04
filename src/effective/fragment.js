@@ -2,12 +2,10 @@ import React, { Component } from 'react'
 import { string } from 'prop-types'
 import { noop, compose, set } from 'lodash/fp'
 import { createStore } from 'redux'
-import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
-import { idGenerator } from '../util/idGenerator'
 import { shallowEqual } from 'recompose'
-import { liftArrow } from '../util/lift'
 import { storePropType, renderSchedulerType } from './propTypes'
-import { breaker } from '../util/breaker'
+import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
+import { idGenerator, breaker, liftArrow } from '../util'
 
 export const Fragment = Symbol('Fragment')
 export const fragmentAction = fragmentId => action => compose(set([Fragment], fragmentId), liftArrow(action)) 

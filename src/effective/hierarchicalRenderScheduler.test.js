@@ -1,5 +1,5 @@
-import { hierarchicalRenderScheduler } from './hierarchicalRenderScheduler'
 import { forEach } from 'lodash/fp'
+import { hierarchicalRenderScheduler } from './hierarchicalRenderScheduler'
 
 const makeTestRequestAnimationFrame = () => {
   
