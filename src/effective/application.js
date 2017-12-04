@@ -10,10 +10,10 @@ export const application = (rootElementId, View, reducer, subscriptions = noop) 
 
   const store = createStore(reducer, effectiveStoreEnhancer())
   const rootElement = document.getElementById(rootElementId)
-  const scheduleRender = hierarchicalRenderScheduler(window.requestAnimationFrame)
+  const renderScheduler = hierarchicalRenderScheduler(window.requestAnimationFrame)
 
   const renderApp = () => render (
-    <Provider store={store} scheduleRender={scheduleRender} fragmentPath='app'>
+    <Provider store={store} renderScheduler={renderScheduler} fragmentPath='app'>
       <View/>
     </Provider>, 
     rootElement
@@ -22,6 +22,6 @@ export const application = (rootElementId, View, reducer, subscriptions = noop) 
   window.addEventListener('beforeunload', () => unmountComponentAtNode(rootElement))
   
   subscriptions(store.dispatch)
-  store.subscribe(() => scheduleRender.schedule('app', renderApp))
+  store.subscribe(() => renderScheduler.schedule('app', renderApp))
   renderApp()
 }

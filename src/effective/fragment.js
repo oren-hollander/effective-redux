@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { object, string } from 'prop-types'
+import { string } from 'prop-types'
 import { noop, compose, set } from 'lodash/fp'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { idGenerator } from '../util/idGenerator'
 import { shallowEqual } from 'recompose'
 import { liftArrow } from '../util/lift'
+import { storePropType, renderSchedulerType } from './propTypes'
 
 export const Fragment = Symbol('Fragment')
 export const fragmentAction = fragmentId => action => compose(set([Fragment], fragmentId), liftArrow(action)) 
@@ -13,13 +14,13 @@ export const fragmentAction = fragmentId => action => compose(set([Fragment], fr
 export const fragment = (fragmentId, View, reducer, subscriptions = noop) => class Comp extends Component {
 
   static contextTypes = {
-    store: object,
-    scheduleRender: object,
+    store: storePropType,
+    renderScheduler: renderSchedulerType,
     fragmentPath: string
   }
 
   static childContextTypes = {
-    store: object, 
+    store: storePropType, 
     fragmentPath: string
   }
 
@@ -32,7 +33,7 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
     const render = this.forceUpdate.bind(this)
     this.unsubscribe = this.store.subscribe(() => {
       this.renderNeeded = true
-      this.context.scheduleRender.schedule(this.fragmentPath, render)
+      this.context.renderScheduler.schedule(this.fragmentPath, render)
     })
   }
 
@@ -53,7 +54,7 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
 
   render(){
     this.renderNeeded = false
-    this.context.scheduleRender.cancel(this.fragmentPath)
+    this.context.renderScheduler.cancel(this.fragmentPath)
     return <View {...this.props}/>
   }
 }

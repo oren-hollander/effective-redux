@@ -1,7 +1,7 @@
 import { getContext, withProps, compose } from 'recompose'
-import { object } from 'prop-types'
+import { storePropType } from './propTypes'
 
 export const dispatching = compose(
-  getContext({store: object}),
+  getContext({store: storePropType}),
   withProps(({store}) => ({dispatch: store.dispatch}))
 )

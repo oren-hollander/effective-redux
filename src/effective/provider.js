@@ -1,13 +1,14 @@
 import { Children } from 'react'
 import { withContext } from 'recompose'
-import { object, string } from 'prop-types'
+import { string } from 'prop-types'
+import { storePropType, renderSchedulerType } from './propTypes'
 
 const OnlyChild = ({children}) => Children.only(children)
 
 export const Provider = withContext({ 
-  store: object,
-  scheduleRender: object,
+  store: storePropType,
+  renderScheduler: renderSchedulerType,
   fragmentPath: string
-  }, ({ store, scheduleRender, fragmentPath }) => ({ store, scheduleRender, fragmentPath }))(
+  }, ({ store, renderScheduler, fragmentPath }) => ({ store, renderScheduler, fragmentPath }))(
   OnlyChild
 )
