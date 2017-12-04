@@ -1,12 +1,17 @@
-import { INC, ASYNC_INC, SET_COUNT, delayedInc, SET_COLOR, LOAD, UNLOAD, INIT_STATE, initState } from './actions'
+import { INC, ASYNC_INC, SET_COUNT, delayedInc, SET_COLOR, LOAD, UNLOAD, INIT_STATE, initState, DO_MULTIPLE_THINGS, inc, WAIT_IS_OVER, waitIsOver } from './actions'
 import { effect } from '../effective/effectiveStoreEnhancer'
 import { setItemToLocalStorage, getItemFromLocalStorage } from '../effective/effects/localStorageEffect'
 import { isUndefined } from 'lodash/fp'
+import { delay } from '../util/delay'
 
 const initialState = {
   count: 0,
   color: 'lightgrey'
 }
+
+const waitASecond = action => async () => delay(1000).then(() => action)
+const doOneThing = () => delay(1000).then(inc)
+const doOtherThing = () => delay(2000).then(inc)
 
 export const reducer = (state = initialState, action) => {
   switch(action.type){
@@ -24,6 +29,10 @@ export const reducer = (state = initialState, action) => {
       return isUndefined(action.state) ? state : action.state
     case UNLOAD:
       return effect(state, setItemToLocalStorage(() => ({type: 'noop'}), 'app-state', state))
+    case DO_MULTIPLE_THINGS:
+      return effect(state, waitASecond(waitIsOver))
+    case WAIT_IS_OVER:
+      return effect(state, [doOneThing(), doOtherThing()])
     default:
       return state
   }

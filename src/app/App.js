@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { compose, defaultTo } from 'lodash/fp'
 import { Button } from '../ui/button'
 import { TextInput } from '../ui/textInput'
-import { inc, asyncInc, setCount, setColor } from './actions'
+import { inc, asyncInc, setCount, setColor, doMultipleThings } from './actions'
 import { Counter } from '../fragments/counter'
 
 const randomColor = () => {
@@ -33,5 +33,7 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
           <Counter color='orange' onChange={setColor}/>
       </Fragment>    
     }
+    <Button onClick={doMultipleThings}> Do Multiple things</Button>
+
   </div>
 }

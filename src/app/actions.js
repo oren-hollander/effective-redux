@@ -29,3 +29,9 @@ export const unload = () => ({ type: UNLOAD })
 
 export const INIT_STATE = 'init-state'
 export const initState = state => ({ type: INIT_STATE, state })
+
+export const DO_MULTIPLE_THINGS = 'do-multiple-things'
+export const doMultipleThings = () => ({ type: DO_MULTIPLE_THINGS })
+
+export const WAIT_IS_OVER = 'wait-is-over'
+export const waitIsOver = ({ type: WAIT_IS_OVER })
