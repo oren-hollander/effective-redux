@@ -1,15 +1,14 @@
 import React from 'react'
-import { identity, delay as _delay } from 'lodash/fp'
 import { Button } from '../ui/button'
 import { fragment, fragmentAction } from '../effective/fragment'
 import { effect } from '../effective/effectiveStoreEnhancer'
-import { mapStateToProps } from '../effective/effective'
-import { dispatching } from '../effective/effective'
+import { mapStateToProps } from '../effective/mapStateToProps'
+import { dispatching } from '../effective/dispatching'
 import { interval } from '../effective/subscriptions/intervalSubscription'
+import { delay } from '../util/delay'
 
 export const COUNTER = Symbol('Counter')
 
-const delay = millis => new Promise(_delay(millis))
 const counterAction = fragmentAction(COUNTER)
 
 const DEC = 'counter/dec'
@@ -51,7 +50,7 @@ export const CounterView = dispatching(({count, color, dispatch}) =>
   </div> 
 )
 
-export const CounterViewWithProps = mapStateToProps({count: identity})(CounterView)
+export const CounterViewWithProps = mapStateToProps(state => ({count: state}))(CounterView)
 
 const subscriptions = interval(30000, inc)
 

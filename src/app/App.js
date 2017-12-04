@@ -5,8 +5,6 @@ import { TextInput } from '../ui/textInput'
 import { inc, asyncInc, setCount, setColor } from './actions'
 import { Counter } from '../fragments/counter'
 
-// const SessionCounter = counterWithStorage(window.sessionStorage)
-
 const randomColor = () => {
   const colors = ['red', 'green', 'blue', 'orange']
   const i = Math.floor(Math.random() * colors.length)

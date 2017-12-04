@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { dispatching } from '../effective/effective'
+import { dispatching } from '../effective/dispatching'
 
 export const TextInput = dispatching(class extends Component {
   constructor(props) {

@@ -1,5 +1,5 @@
 import React  from 'react'
-import { dispatching } from '../effective/effective'
+import { dispatching } from '../effective/dispatching'
 
 export const Button = dispatching (
   ({color, onClick, children, dispatch}) => 

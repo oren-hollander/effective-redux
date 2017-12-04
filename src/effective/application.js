@@ -2,7 +2,7 @@ import React from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
-import { Provider } from './effective'
+import { Provider } from './provider'
 import { noop } from 'lodash/fp'
 import { hierarchicalRenderScheduler } from './hierarchicalRenderScheduler'
 
