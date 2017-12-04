@@ -1,7 +1,7 @@
 import React from 'react'
 import { identity, delay as _delay } from 'lodash/fp'
 import { Button } from '../ui/button'
-import { fragment, Fragment } from '../effective/fragment'
+import { fragment, fragmentAction } from '../effective/fragment'
 import { effect } from '../effective/effectiveStoreEnhancer'
 import { mapStateToProps } from '../effective/effective'
 import { dispatching } from '../effective/effective'
@@ -10,17 +10,21 @@ import { interval } from '../effective/subscriptions/intervalSubscription'
 export const COUNTER = Symbol('Counter')
 
 const delay = millis => new Promise(_delay(millis))
+const counterAction = fragmentAction(COUNTER)
 
 const DEC = 'counter/dec'
-const dec = () => ({ type: DEC, [Fragment]: COUNTER })
+const dec = () => counterAction({ type: DEC })
 
 const INC = 'counter/inc'
-const inc = () => ({ type: INC, [Fragment]: COUNTER })
+const inc = () => counterAction({ type: INC })
 
 const SET_COUNT = 'counter/set-count'
-const setCount = count => ({ type: SET_COUNT, [Fragment]: COUNTER, count })
+const setCount = count => counterAction(({ type: SET_COUNT, count }))
 
-const incAsync = getState => delay(1000).then(() => setCount(getState() + 1))
+const incAsync = async getState => {
+  await delay(1000)
+  return setCount(getState() + 1)
+}
 
 export const reducer =  (count = 9, action, {onChange, color}) => {
 

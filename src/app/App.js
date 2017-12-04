@@ -3,7 +3,7 @@ import { compose, defaultTo } from 'lodash/fp'
 import { Button } from '../ui/button'
 import { TextInput } from '../ui/textInput'
 import { inc, asyncInc, setCount, setColor } from './actions'
-import { Counter } from '../components/counter'
+import { Counter } from '../fragments/counter'
 
 // const SessionCounter = counterWithStorage(window.sessionStorage)
 

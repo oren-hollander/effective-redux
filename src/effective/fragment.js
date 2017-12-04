@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { object, func, string } from 'prop-types'
-import { noop } from 'lodash/fp'
+import { noop, compose, set } from 'lodash/fp'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { idGenerator } from '../util/idGenerator'
 import { shallowEqual } from 'recompose'
+import { liftArrow } from '../util/lift'
 
 export const Fragment = Symbol('Fragment')
+export const fragmentAction = fragmentId => action => compose(set([Fragment], fragmentId), liftArrow(action)) 
 
 export const fragment = (fragmentId, View, reducer, subscriptions = noop) => class Comp extends Component {
 
