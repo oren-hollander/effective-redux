@@ -4,6 +4,7 @@ import { setItemToLocalStorage, getItemFromLocalStorage } from '../effective/com
 import { isUndefined } from 'lodash/fp'
 import { delay } from '../util/delay'
 import { batch } from '../effective/commands/batch'
+import { noAction } from '../util/noAction'
 
 const initialState = {
   count: 0,
@@ -29,7 +30,7 @@ export const reducer = (state = initialState, action) => {
     case INIT_STATE: 
       return isUndefined(action.state) ? state : action.state
     case UNLOAD:
-      return effect(state, setItemToLocalStorage(() => ({type: 'noop'}), 'app-state', state))
+      return effect(state, setItemToLocalStorage(noAction, 'app-state', state))
     case DO_MULTIPLE_THINGS:
       return effect(state, waitASecond(waitIsOver))
     case WAIT_IS_OVER:

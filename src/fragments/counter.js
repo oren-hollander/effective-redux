@@ -12,13 +12,13 @@ export const COUNTER = Symbol('Counter')
 
 const counterAction = fragmentAction(COUNTER)
 
-const DEC = 'counter/dec'
+const DEC = 'dec'
 const dec = () => counterAction({ type: DEC })
 
-const INC = 'counter/inc'
+const INC = 'inc'
 const inc = () => counterAction({ type: INC })
 
-const SET_COUNT = 'counter/set-count'
+const SET_COUNT = 'set-count'
 const setCount = count => counterAction(({ type: SET_COUNT, count }))
 
 const incAsync = async getState => {
@@ -26,7 +26,7 @@ const incAsync = async getState => {
   return setCount(getState() + 1)
 }
 
-export const reducer =  (count = 9, action, {onChange, color}) => {
+export const reducer =  (count = 9, action, { onChange, color }) => {
 
   switch(action.type){
     case DEC: 
@@ -51,7 +51,7 @@ export const CounterView = dispatching(({count, color, dispatch}) =>
   </div> 
 )
 
-export const CounterViewWithProps = mapStateToProps(state => ({count: state}))(CounterView)
+export const CounterViewWithProps = mapStateToProps(state => ({ count: state }))(CounterView)
 
 const subscriptions = interval(300000, inc)
 
