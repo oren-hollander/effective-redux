@@ -6,7 +6,6 @@ export const animationFrameRenderer = curry((requestAnimationFrame, render) => {
     if(!rendering){
       rendering = true
       requestAnimationFrame((ms) => {
-        console.log('animationFrameRenderer', ms)
         render()
         rendering = false
       })

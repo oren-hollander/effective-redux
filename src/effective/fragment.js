@@ -7,6 +7,7 @@ import { idGenerator } from '../util/idGenerator'
 import { shallowEqual } from 'recompose'
 import { liftArrow } from '../util/lift'
 import { storePropType, renderSchedulerType } from './propTypes'
+import { breaker } from '../util/breaker'
 
 export const Fragment = Symbol('Fragment')
 export const fragmentAction = fragmentId => action => compose(set([Fragment], fragmentId), liftArrow(action)) 
@@ -30,10 +31,12 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
     this.fragmentPath = `${this.context.fragmentPath}.${Comp.nextFragmentId()}`
     this.store = createStore(reducer, effectiveStoreEnhancer(this.context.store, fragmentId, () => this.props))
     subscriptions(this.store.dispatch)
-    const render = this.forceUpdate.bind(this)
+    
+    this.update = breaker(this.forceUpdate.bind(this))
+
     this.unsubscribe = this.store.subscribe(() => {
-      this.renderNeeded = true
-      this.context.renderScheduler.schedule(this.fragmentPath, render)
+      this.update.on()
+      this.context.renderScheduler(this.fragmentPath, this.update)
     })
   }
 
@@ -49,12 +52,11 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
   }
 
   shouldComponentUpdate(nextProps) {
-    return this.renderNeeded || !shallowEqual(nextProps, this.props) 
+    return !shallowEqual(nextProps, this.props) 
   }
 
   render(){
-    this.renderNeeded = false
-    this.context.renderScheduler.cancel(this.fragmentPath)
+    this.update.off()
     return <View {...this.props}/>
   }
 }

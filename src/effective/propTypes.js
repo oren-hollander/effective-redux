@@ -7,7 +7,4 @@ export const storePropType = shape({
   replaceReducer: func.isRequired
 })
 
-export const renderSchedulerType = shape({
-  schedule: func.isRequired,
-  cancel: func.isRequired
-})
+export const renderSchedulerType = func.isRequired
