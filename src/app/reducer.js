@@ -1,10 +1,8 @@
-import { INC, ASYNC_INC, SET_COUNT, delayedInc, SET_COLOR, LOAD, UNLOAD, INIT_STATE, initState, DO_MULTIPLE_THINGS, inc, WAIT_IS_OVER, waitIsOver } from './actions'
-import { effect } from '../effective/effectiveStoreEnhancer'
-import { setItemToLocalStorage, getItemFromLocalStorage } from '../effective/commands/localStorageCommand'
 import { isUndefined } from 'lodash/fp'
-import { delay } from '../util/delay'
-import { batch } from '../effective/commands/batch'
-import { noAction } from '../util/noAction'
+import { INC, ASYNC_INC, SET_COUNT, delayedInc, SET_COLOR, LOAD, UNLOAD, INIT_STATE, initState, DO_MULTIPLE_THINGS, inc, WAIT_IS_OVER, waitIsOver } from './actions'
+import { effect } from '../effective'
+import { batch, setItemToLocalStorage, getItemFromLocalStorage } from '../effective/commands'
+import { delay, noAction } from '../util'
 
 const initialState = {
   count: 0,

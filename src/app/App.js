@@ -1,9 +1,8 @@
 import React, { Fragment } from 'react'
 import { compose, defaultTo } from 'lodash/fp'
-import { Button } from '../ui/button'
-import { TextInput } from '../ui/textInput'
+import { TextInput, Button } from '../ui'
 import { inc, asyncInc, setCount, setColor, doMultipleThings } from './actions'
-import { Counter } from '../fragments/counter'
+import { Counter } from '../fragments'
 
 const randomColor = () => {
   const colors = ['red', 'green', 'blue', 'orange']

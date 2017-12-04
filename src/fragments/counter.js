@@ -1,12 +1,9 @@
 import React from 'react'
-import { Button } from '../ui/button'
-import { fragment, fragmentAction } from '../effective/fragment'
-import { effect } from '../effective/effectiveStoreEnhancer'
-import { mapStateToProps } from '../effective/mapStateToProps'
-import { dispatching } from '../effective/dispatching'
-import { interval } from '../effective/subscriptions/intervalSubscription'
-import { delay } from '../util/delay'
-import { batch } from '../effective/commands/batch'
+import { Button } from '../ui'
+import { fragment, fragmentAction, mapStateToProps, dispatching, effect } from '../effective'
+import { interval } from '../effective/subscriptions'
+import { delay } from '../util'
+import { batch } from '../effective/commands'
 
 export const COUNTER = Symbol('Counter')
 

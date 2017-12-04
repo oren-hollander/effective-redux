@@ -1,13 +1,7 @@
 import registerServiceWorker from './registerServiceWorker'
-import { mapStateToProps } from './effective/mapStateToProps'
-import { App } from './app/app'
-import { reducer } from './app/reducer'
-import { selectCount, selectColor } from './app/selectors'
-import { asyncInc, load, unload } from './app/actions'
-import { application } from './effective/application'
-import { interval } from './effective/subscriptions/intervalSubscription'
-import { combineSubscriptions } from './effective/subscriptions/combineSubscriptions'
-import { appLifecycle } from './effective/subscriptions/appLifecycle'
+import { application, mapStateToProps } from './effective'
+import { App, reducer, selectCount, selectColor, asyncInc, load, unload } from './app'
+import { appLifecycle, combineSubscriptions, interval } from './effective/subscriptions'
 
 const AppWithProps = mapStateToProps(state => ({count: selectCount(state), color: selectColor(state)}))(App)
 

@@ -1,7 +1,5 @@
-import { delay as _delay } from 'lodash/fp'
 import { selectCount } from './selectors'
-
-const delay = millis => new Promise(_delay(millis))
+import { delay } from '../util'
 
 export const INC = 'inc'
 export const inc = () => ({ type: INC })
