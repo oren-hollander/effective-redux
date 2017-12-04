@@ -22,6 +22,6 @@ export const application = (rootElementId, View, reducer, subscriptions = noop) 
   window.addEventListener('beforeunload', () => unmountComponentAtNode(rootElement))
   
   subscriptions(store.dispatch)
-  store.subscribe(() => scheduleRender('app', renderApp))
+  store.subscribe(() => scheduleRender.schedule('app', renderApp))
   renderApp()
 }

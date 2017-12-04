@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { object, func, string } from 'prop-types'
+import { object, string } from 'prop-types'
 import { noop, compose, set } from 'lodash/fp'
 import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
@@ -14,7 +14,7 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
 
   static contextTypes = {
     store: object,
-    scheduleRender: func,
+    scheduleRender: object,
     fragmentPath: string
   }
 
@@ -32,7 +32,7 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
     const render = this.forceUpdate.bind(this)
     this.unsubscribe = this.store.subscribe(() => {
       this.renderNeeded = true
-      this.context.scheduleRender(this.fragmentPath, render)
+      this.context.scheduleRender.schedule(this.fragmentPath, render)
     })
   }
 
@@ -53,6 +53,7 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
 
   render(){
     this.renderNeeded = false
+    this.context.scheduleRender.cancel(this.fragmentPath)
     return <View {...this.props}/>
   }
 }
