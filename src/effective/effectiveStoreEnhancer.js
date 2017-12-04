@@ -6,10 +6,10 @@ import { invoke } from '../util/invoke'
 
 const Effect = Symbol('Effect')
 
-const makeEffect = curry((state, actions) => ({
+const makeEffect = curry((state, commands) => ({
   [Effect]: true,
   state, 
-  actions
+  commands
 }))
 
 const noEffect = makeEffect({}, [])
@@ -18,7 +18,7 @@ const isEffect = value => value[Effect]
 
 const liftEffect = lift(isEffect, flip(makeEffect)([]))
 
-export const effect = (state, asyncActions) => makeEffect(state, liftArray(asyncActions))
+export const effect = (state, commands) => makeEffect(state, liftArray(commands))
 
 export const effectiveStoreEnhancer = (parentStore, fragmentId, propsGetter = constant({})) => nextStoreCreator => (reducer, preloadedState) => {
 
@@ -30,7 +30,7 @@ export const effectiveStoreEnhancer = (parentStore, fragmentId, propsGetter = co
         liftPromise, 
         applyGetState, 
         liftArrow
-      ), effect.actions)
+      ), effect.commands)
   
      return effect.state
   } 

@@ -1,8 +1,9 @@
 import { INC, ASYNC_INC, SET_COUNT, delayedInc, SET_COLOR, LOAD, UNLOAD, INIT_STATE, initState, DO_MULTIPLE_THINGS, inc, WAIT_IS_OVER, waitIsOver } from './actions'
 import { effect } from '../effective/effectiveStoreEnhancer'
-import { setItemToLocalStorage, getItemFromLocalStorage } from '../effective/effects/localStorageEffect'
+import { setItemToLocalStorage, getItemFromLocalStorage } from '../effective/commands/localStorageCommand'
 import { isUndefined } from 'lodash/fp'
 import { delay } from '../util/delay'
+import { batch } from '../effective/commands/batch'
 
 const initialState = {
   count: 0,
@@ -32,7 +33,7 @@ export const reducer = (state = initialState, action) => {
     case DO_MULTIPLE_THINGS:
       return effect(state, waitASecond(waitIsOver))
     case WAIT_IS_OVER:
-      return effect(state, [doOneThing(), doOtherThing()])
+      return effect(state, batch(doOneThing(), doOtherThing()))
     default:
       return state
   }

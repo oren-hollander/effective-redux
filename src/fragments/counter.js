@@ -6,6 +6,7 @@ import { mapStateToProps } from '../effective/mapStateToProps'
 import { dispatching } from '../effective/dispatching'
 import { interval } from '../effective/subscriptions/intervalSubscription'
 import { delay } from '../util/delay'
+import { batch } from '../effective/commands/batch'
 
 export const COUNTER = Symbol('Counter')
 
@@ -32,7 +33,7 @@ export const reducer =  (count = 9, action, {onChange, color}) => {
       return effect(count - 1, onChange(color))
     
     case INC: 
-      return effect(count, [incAsync, onChange(color)])
+      return effect(count, batch(incAsync, onChange(color)))
   
     case SET_COUNT:
       return action.count
