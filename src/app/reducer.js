@@ -11,7 +11,7 @@ const initialState = {
   color: 'lightgrey'
 }
 
-const waitASecond = action => async () => delay(1000).then(() => action)
+const waitASecond = action => () => delay(1000).then(() => action)
 const doOneThing = () => delay(1000).then(inc)
 const doOtherThing = () => delay(2000).then(inc)
 

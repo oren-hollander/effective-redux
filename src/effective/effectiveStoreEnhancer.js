@@ -3,6 +3,7 @@ import { Fragment } from './fragment';
 import { lift, liftArrow, liftArray, liftPromise } from '../util/lift'
 import { flip } from '../util/flip'
 import { invoke } from '../util/invoke'
+import { mapPromise } from '../util/mapPromise'
 
 const Effect = Symbol('Effect')
 
@@ -26,7 +27,7 @@ export const effectiveStoreEnhancer = (parentStore, fragmentId, propsGetter = co
     const effect = liftEffect(reducer(state, action, propsGetter()))
     if(!isEmpty(store)) 
       map(compose(
-        async promise => dispatch(await promise), 
+        mapPromise(dispatch),
         liftPromise, 
         applyGetState, 
         liftArrow
