@@ -33,8 +33,7 @@ export const effectiveStoreEnhancer = (parentStore, fragmentId, propsGetter = co
      return effect.state
   } 
   
-  const dispatch = actionOrActionCreator => {
-    const action = liftArrow(actionOrActionCreator)()
+  const dispatch = action => {
     if(parentStore && fragmentId){
       if(action[Fragment] === fragmentId){
         return store.dispatch(action)
