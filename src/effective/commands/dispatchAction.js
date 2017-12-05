@@ -1,0 +1,1 @@
+export const dispatchAction = action => async () => action
