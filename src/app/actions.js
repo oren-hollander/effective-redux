@@ -32,8 +32,10 @@ export const DO_MULTIPLE_THINGS = 'do-multiple-things'
 export const doMultipleThings = () => ({ type: DO_MULTIPLE_THINGS })
 
 export const WAIT_IS_OVER = 'wait-is-over'
-export const waitIsOver = ({ type: WAIT_IS_OVER })
+export const waitIsOver = () => ({ type: WAIT_IS_OVER })
 
-export const waitASecond = command(action => delay(1000).then(constant(action)))
+export const waitASecondImpl = delay => command(action => delay(1000).then(constant(action)))
+
+export const waitASecond = waitASecondImpl(delay)
 export const doOneThing = command(() => delay(1000).then(inc))
 export const doOtherThing = command(() => delay(2000).then(inc))

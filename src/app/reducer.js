@@ -32,7 +32,7 @@ export const reducer = (state = initialState, action) => {
     case UNLOAD:
       return effect(state, setItemToLocalStorage(noAction, 'app-state', state))
     case DO_MULTIPLE_THINGS:
-      return effect(state, waitASecond(waitIsOver))
+      return effect(state, waitASecond(waitIsOver()))
     case WAIT_IS_OVER:
       return effect(state, batch(doOneThing(), doOtherThing()))
     default:
