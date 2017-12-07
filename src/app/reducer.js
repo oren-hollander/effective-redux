@@ -1,24 +1,26 @@
 import { isUndefined } from 'lodash/fp'
-import { INC, ASYNC_INC, SET_COUNT, delayedInc, SET_COLOR, LOAD, UNLOAD, INIT_STATE, initState, DO_MULTIPLE_THINGS, inc, WAIT_IS_OVER, waitIsOver } from './actions'
+
+import { 
+  INC, ASYNC_INC, SET_COUNT, delayedInc, SET_COLOR, LOAD, UNLOAD, INIT_STATE, DO_MULTIPLE_THINGS, WAIT_IS_OVER, 
+  initState, waitIsOver, waitASecond, doOneThing, doOtherThing
+} from './actions'
+
 import { effect } from '../effective'
-import { batch, setItemToLocalStorage, getItemFromLocalStorage } from '../effective/commands'
-import { delay, noAction } from '../util'
+import { setItemToLocalStorage, getItemFromLocalStorage } from '../effective/commands'
+import { noAction } from '../util'
+import { batch } from '../effective/command'
 
 const initialState = {
   count: 0,
   color: 'lightgrey'
 }
 
-const waitASecond = action => () => delay(1000).then(() => action)
-const doOneThing = () => delay(1000).then(inc)
-const doOtherThing = () => delay(2000).then(inc)
-
 export const reducer = (state = initialState, action) => {
   switch(action.type){
     case INC:
       return { ...state, count: state.count + 1 }
     case ASYNC_INC: 
-      return effect(state, delayedInc)
+      return effect(state, delayedInc(state.count))
     case SET_COUNT:
       return { ...state, count: action.count }
     case SET_COLOR:

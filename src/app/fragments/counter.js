@@ -3,7 +3,8 @@ import { Button } from '../../ui'
 import { fragment, fragmentAction, mapStateToProps, dispatching, effect } from '../../effective'
 import { interval } from '../../effective/subscriptions'
 import { delay } from '../../util'
-import { batch } from '../../effective/commands'
+import { command, batch } from '../../effective/command'
+import { dispatchAction } from '../../effective/commands'
 
 export const COUNTER = Symbol('Counter')
 
@@ -18,19 +19,19 @@ const inc = () => counterAction({ type: INC })
 const SET_COUNT = 'set-count'
 const setCount = count => counterAction(({ type: SET_COUNT, count }))
 
-const incAsync = async getState => {
+const incAsync = command(async count => {
   await delay(1000)
-  return setCount(getState() + 1)
-}
+  return setCount(count + 1)
+})
 
 export const reducer =  (count = 9, action, { onChange, color }) => {
 
   switch(action.type){
     case DEC: 
-      return effect(count - 1, onChange(color))
+      return effect(count - 1, dispatchAction(onChange(color)))
     
     case INC: 
-      return effect(count, batch(incAsync, onChange(color)))
+      return effect(count, batch(incAsync(count), dispatchAction(onChange(color))))
   
     case SET_COUNT:
       return action.count
@@ -50,6 +51,6 @@ export const CounterView = dispatching(({count, color, dispatch}) =>
 
 export const CounterViewWithProps = mapStateToProps(state => ({ count: state }))(CounterView)
 
-const subscriptions = interval(50000, inc())
+const subscriptions = interval(40000, inc())
 
 export const Counter = fragment(COUNTER, CounterViewWithProps, reducer, subscriptions)

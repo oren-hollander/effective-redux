@@ -1,5 +1,6 @@
-import { selectCount } from './selectors'
+import { constant } from 'lodash/fp'
 import { delay } from '../util'
+import { command } from '../effective/command'
 
 export const INC = 'inc'
 export const inc = () => ({ type: INC })
@@ -10,11 +11,10 @@ export const asyncInc = () => ({ type: ASYNC_INC })
 export const SET_COUNT = 'set-count'
 export const setCount = count => ({ type: SET_COUNT, count })
 
-export const delayedInc = async getState => {
-  const count = selectCount(getState())
+export const delayedInc = command(async count => {
   await delay(1000)
   return setCount(count + 1)
-}
+})
 
 export const SET_COLOR = 'set-color'
 export const setColor = color => ({ type: SET_COLOR, color })
@@ -33,3 +33,7 @@ export const doMultipleThings = () => ({ type: DO_MULTIPLE_THINGS })
 
 export const WAIT_IS_OVER = 'wait-is-over'
 export const waitIsOver = ({ type: WAIT_IS_OVER })
+
+export const waitASecond = command(action => delay(1000).then(constant(action)))
+export const doOneThing = command(() => delay(1000).then(inc))
+export const doOtherThing = command(() => delay(2000).then(inc))
