@@ -4,16 +4,17 @@ import { createStore } from 'redux'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { Provider } from './provider'
 import { noop } from 'lodash/fp'
-import { hierarchicalRenderScheduler } from './hierarchicalRenderScheduler'
+import { renderScheduler } from './hierarchicalRenderScheduler'
+import { requestAnimationFrame } from '../util'
 
 export const application = (rootElementId, View, reducer, subscriptions = noop) => {
 
   const store = createStore(reducer, effectiveStoreEnhancer())
   const rootElement = document.getElementById(rootElementId)
-  const renderScheduler = hierarchicalRenderScheduler(window.requestAnimationFrame)
+  const scheduler = renderScheduler(requestAnimationFrame)
 
   const renderApp = () => render (
-    <Provider store={store} renderScheduler={renderScheduler} fragmentPath='app'>
+    <Provider store={store} renderScheduler={scheduler} fragmentPath='app'>
       <View/>
     </Provider>, 
     rootElement
@@ -22,6 +23,6 @@ export const application = (rootElementId, View, reducer, subscriptions = noop) 
   window.addEventListener('beforeunload', () => unmountComponentAtNode(rootElement))
   
   subscriptions(store.dispatch)
-  store.subscribe(() => renderScheduler('app', renderApp))
+  store.subscribe(() => scheduler.scheduleOwn().then(renderApp))
   renderApp()
 }

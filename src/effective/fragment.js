@@ -6,6 +6,7 @@ import { shallowEqual } from 'recompose'
 import { storePropType, renderSchedulerType } from './propTypes'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { idGenerator, breaker } from '../util'
+import { renderScheduler } from './hierarchicalRenderScheduler'
 
 export const Fragment = Symbol('Fragment')
 export const fragmentAction = fragmentId => set([Fragment], fragmentId)
@@ -14,13 +15,12 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
 
   static contextTypes = {
     store: storePropType,
-    renderScheduler: renderSchedulerType,
-    fragmentPath: string
+    renderScheduler: renderSchedulerType
   }
 
   static childContextTypes = {
-    store: storePropType, 
-    fragmentPath: string
+    store: storePropType,
+    renderScheduler: renderSchedulerType    
   }
 
   static nextFragmentId = idGenerator('effective/fragment/')
@@ -30,11 +30,12 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
     this.store = createStore(reducer, effectiveStoreEnhancer(this.context.store, fragmentId, () => this.props))
     subscriptions(this.store.dispatch)
     
+    this.renderScheduler = renderScheduler(this.context.renderScheduler.scheduleChild)
     this.update = breaker(this.forceUpdate.bind(this))
 
     this.unsubscribe = this.store.subscribe(() => {
       this.update.on()
-      this.context.renderScheduler(this.fragmentPath, this.update)
+      this.renderScheduler.scheduleOwn().then(this.update)
     })
   }
 
@@ -45,7 +46,7 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
   getChildContext() {
     return {
       store: this.store,
-      fragmentPath: this.fragmentPath
+      renderScheduler: this.renderScheduler
     }
   }
 

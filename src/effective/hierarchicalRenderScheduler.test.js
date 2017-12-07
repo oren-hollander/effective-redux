@@ -16,16 +16,3 @@ const makeTestRequestAnimationFrame = () => {
 
   return [requestAnimationFrame, fireAnimationFrame]
 }
-
-test('hierarchicalRenderer', () => {
-
-  // const [requestAnimationFrame, fireAnimationFrame] = makeTestRequestAnimationFrame()
-  
-  // const hr = hierarchicalRenderer(requestAnimationFrame)
-  
-  // hr.schedule('fragment-1')
-  //   .then(done)
-  //   .catch(done.fail)
-
-  // fireAnimationFrame()
-})

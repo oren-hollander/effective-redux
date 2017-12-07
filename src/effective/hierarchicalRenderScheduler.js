@@ -32,7 +32,7 @@ export const renderScheduler = parentRenderScheduler => {
   let renderRequested = false
 
   const notify = () => {
-    forEach(invoke, resolvers)
+    forEach(invoke(), resolvers)
     resolvers = []
     renderRequested = false
   }
@@ -40,7 +40,7 @@ export const renderScheduler = parentRenderScheduler => {
   const requestRender = () => {
     if(!renderRequested){
       renderRequested = true
-      parentRenderScheduler.scheduleChild().then(notify)
+      parentRenderScheduler().then(notify)
     }
   }
 
