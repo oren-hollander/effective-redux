@@ -19,7 +19,7 @@ const liftEffect = lift(isEffect, flip(makeEffect)([]))
 
 export const effect = (state, commands) => makeEffect(state, liftArray(commands))
 
-export const effectiveStoreEnhancer = (parentStore, fragmentId, propsGetter = constant({})) => nextStoreCreator => (reducer, preloadedState) => {
+export const effectiveStoreEnhancer = (dispatch, propsGetter = constant({})) => nextStoreCreator => (reducer, preloadedState) => {
 
   const effectReducer = reducer => (state, action) => {    
     const effect = liftEffect(reducer(state, action, propsGetter()))
@@ -28,26 +28,12 @@ export const effectiveStoreEnhancer = (parentStore, fragmentId, propsGetter = co
   
      return effect.state
   } 
-  
-  const dispatch = action => {
-    if(parentStore && fragmentId){
-      if(action[Fragment] === fragmentId){
-        return store.dispatch(action)
-      }
-      else {
-        return parentStore.dispatch(action)
-      }
-    }
-    else {
-      return store.dispatch(action)      
-    }
-  }
 
   const store = nextStoreCreator(effectReducer(reducer), preloadedState)
-  
+  dispatch = dispatch || store.dispatch
+
   return { 
     ...store, 
-    dispatch,
     replaceReducer: reducer => store.replaceReducer(effectReducer(reducer)) 
   }
 }

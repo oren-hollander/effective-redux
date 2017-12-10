@@ -29,7 +29,7 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
   
   componentWillMount() {
     this.fragmentPath = `${this.context.fragmentPath}.${Comp.nextFragmentId()}`
-    this.store = createStore(reducer, effectiveStoreEnhancer(this.context.store, fragmentId, () => this.props))
+    this.store = createStore(reducer, effectiveStoreEnhancer(this.context.dispatch, () => this.props))
     subscriptions(this.store.dispatch)
     
     this.renderScheduler = renderScheduler(this.context.renderScheduler.scheduleChild)
@@ -46,8 +46,12 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
   }
 
   getChildContext() {
+    const dispatch = action => action[Fragment] === fragmentId 
+      ? this.store.dispatch(action) 
+      : this.context.store.dispatch(action)
+
     return {
-      dispatch: this.store.dispatch,
+      dispatch: dispatch,
       getState: this.store.getState,
       renderScheduler: this.renderScheduler
     }
