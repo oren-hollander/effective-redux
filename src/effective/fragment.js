@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { func } from 'prop-types'
 import { noop, set } from 'lodash/fp'
 import { createStore } from 'redux'
@@ -11,7 +11,7 @@ import { renderScheduler } from './hierarchicalRenderScheduler'
 export const Fragment = Symbol('Fragment')
 export const fragmentAction = fragmentId => set([Fragment], fragmentId)
 
-export const fragment = (fragmentId, View, reducer, subscriptions = noop) => class Comp extends Component {
+export const fragment = (fragmentId, View, reducer, subscriptions = noop) => class Comp extends PureComponent {
 
   static contextTypes = {
     renderScheduler: renderSchedulerType,
@@ -51,10 +51,6 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
       getState: this.store.getState,
       renderScheduler: this.renderScheduler
     }
-  }
-
-  shouldComponentUpdate(nextProps) {
-    return !shallowEqual(nextProps, this.props) 
   }
 
   render(){
