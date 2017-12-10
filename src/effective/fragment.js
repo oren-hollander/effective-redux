@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { string } from 'prop-types'
+import { func } from 'prop-types'
 import { noop, set } from 'lodash/fp'
 import { createStore } from 'redux'
 import { shallowEqual } from 'recompose'
-import { storePropType, renderSchedulerType } from './propTypes'
+import { renderSchedulerType } from './propTypes'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { idGenerator, breaker } from '../util'
 import { renderScheduler } from './hierarchicalRenderScheduler'
@@ -14,13 +14,15 @@ export const fragmentAction = fragmentId => set([Fragment], fragmentId)
 export const fragment = (fragmentId, View, reducer, subscriptions = noop) => class Comp extends Component {
 
   static contextTypes = {
-    store: storePropType,
-    renderScheduler: renderSchedulerType
+    renderScheduler: renderSchedulerType,
+    dispatch: func,
+    getState: func
   }
 
   static childContextTypes = {
-    store: storePropType,
-    renderScheduler: renderSchedulerType    
+    renderScheduler: renderSchedulerType,
+    dispatch: func,
+    getState: func
   }
 
   static nextFragmentId = idGenerator('effective/fragment/')
@@ -45,7 +47,8 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
 
   getChildContext() {
     return {
-      store: this.store,
+      dispatch: this.store.dispatch,
+      getState: this.store.getState,
       renderScheduler: this.renderScheduler
     }
   }

@@ -14,7 +14,7 @@ export const application = (rootElementId, View, reducer, subscriptions = noop) 
   const scheduler = renderScheduler(requestAnimationFrame)
 
   const renderApp = () => render (
-    <Provider store={store} renderScheduler={scheduler} fragmentPath='app'>
+    <Provider renderScheduler={scheduler} dispatch={store.dispatch} getState={store.getState}> 
       <View/>
     </Provider>, 
     rootElement

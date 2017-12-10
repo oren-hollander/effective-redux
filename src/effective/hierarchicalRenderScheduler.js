@@ -1,4 +1,4 @@
-import { forEach, concat } from 'lodash/fp'
+import { forEach, concat, noop } from 'lodash/fp'
 import { renderTree, renderNode, schedule, sort } from './renderTree'
 import { invoke } from '../util'
 
@@ -28,13 +28,20 @@ export const hierarchicalRenderScheduler = requestAnimationFrame => {
 }
 
 export const renderScheduler = parentRenderScheduler => {
-  let resolvers = []
-  let renderRequested = false
+  let ownResolver
+  let childResolvers
+  let renderRequested
 
+  const reset = () => {
+    ownResolver = noop
+    childResolvers = []
+    renderRequested = false      
+  }
+  
   const notify = () => {
-    forEach(invoke(), resolvers)
-    resolvers = []
-    renderRequested = false
+    ownResolver()
+    forEach(invoke(), childResolvers)
+    reset()
   }
 
   const requestRender = () => {
@@ -45,14 +52,22 @@ export const renderScheduler = parentRenderScheduler => {
   }
 
   const scheduleOwn = () => new Promise(resolve => {
-    resolvers = concat([resolve], resolvers)
     requestRender()
+    ownResolver = resolve
+  })
+
+  
+  new Promise(resolve => {
+    if(!ownResolver)
+      ownResolver = resolve
   })
 
   const scheduleChild = () => new Promise(resolve => {
-    resolvers = concat(resolvers, [resolve])    
+    childResolvers = concat(childResolvers, [resolve])    
     requestRender()
   })
+
+  reset()
 
   return { scheduleOwn, scheduleChild }
 }

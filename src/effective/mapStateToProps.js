@@ -1,7 +1,7 @@
 import { getContext, withProps, compose } from 'recompose'
-import { storePropType } from './propTypes'
+import { func } from 'prop-types'
 
 export const mapStateToProps = stateToProps => compose(
-  getContext({store: storePropType}),
-  withProps(({store}) => stateToProps(store.getState()))
+  getContext({getState: func}),
+  withProps(({getState}) => stateToProps(getState()))
 )
