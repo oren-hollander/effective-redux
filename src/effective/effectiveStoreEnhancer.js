@@ -1,5 +1,4 @@
 import { curry, map, reduce, toPairs, isEmpty, compose, constant } from 'lodash/fp'
-import { Fragment } from './fragment';
 import { flip, mapPromise, lift, liftArray } from '../util'
 import { execute } from './command'
 
