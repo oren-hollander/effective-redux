@@ -55,13 +55,7 @@ export const renderScheduler = parentRenderScheduler => {
     requestRender()
     ownResolver = resolve
   })
-
   
-  new Promise(resolve => {
-    if(!ownResolver)
-      ownResolver = resolve
-  })
-
   const scheduleChild = () => new Promise(resolve => {
     childResolvers = concat(childResolvers, [resolve])    
     requestRender()

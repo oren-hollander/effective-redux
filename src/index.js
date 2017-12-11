@@ -5,7 +5,7 @@ import { appLifecycle, combineSubscriptions, interval } from './effective/subscr
 
 const AppWithProps = mapStateToProps(state => ({count: selectCount(state), color: selectColor(state)}))(App)
 
-const subscriptions = combineSubscriptions(interval(50000, asyncInc()), appLifecycle(load(), unload()))
+const subscriptions = combineSubscriptions(interval(500000, asyncInc()), appLifecycle(load(), unload()))
 application('root', AppWithProps, reducer, subscriptions)
 
 registerServiceWorker()

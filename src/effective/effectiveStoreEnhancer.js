@@ -1,4 +1,4 @@
-import { curry, map, reduce, toPairs, isEmpty, compose, constant } from 'lodash/fp'
+import { curry, map, reduce, toPairs, isUndefined, compose, constant } from 'lodash/fp'
 import { flip, mapPromise, lift, liftArray } from '../util'
 import { execute } from './command'
 
@@ -22,7 +22,7 @@ export const effectiveStoreEnhancer = (dispatch, propsGetter = constant({})) => 
 
   const effectReducer = reducer => (state, action) => {    
     const effect = liftEffect(reducer(state, action, propsGetter()))
-    if(!isEmpty(store)) 
+    if(!isUndefined(store)) 
       map(compose(mapPromise(dispatch), execute), effect.commands)
   
      return effect.state
