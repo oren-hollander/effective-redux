@@ -1,11 +1,12 @@
+import thunk from 'redux-thunk'
 import registerServiceWorker from './registerServiceWorker'
 import { application, mapStateToProps } from './effective'
-import { App, reducer, selectCount, selectColor, asyncInc, load, unload } from './app'
-import { appLifecycle, combineSubscriptions, interval } from './effective/subscriptions'
+import { App, reducer, selectCount, selectColor } from './app'
+import { createStore, applyMiddleware } from 'redux'
 
 const AppWithProps = mapStateToProps(state => ({count: selectCount(state), color: selectColor(state)}))(App)
+const store = createStore(reducer, applyMiddleware(thunk))
 
-const subscriptions = combineSubscriptions(interval(50000, asyncInc()), appLifecycle(load(), unload()))
-application('root', AppWithProps, reducer, subscriptions)
+application('root', AppWithProps, store)
 
 registerServiceWorker()

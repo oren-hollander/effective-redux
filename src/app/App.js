@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { compose, defaultTo } from 'lodash/fp'
 import { TextInput, Button } from '../ui'
-import { inc, asyncInc, setCount, setColor, doMultipleThings } from './actions'
+import { inc, setCount, setColor, doMultipleThings, delayedInc } from './actions'
 import { Counter } from './fragments'
 
 const randomColor = () => {
@@ -20,7 +20,7 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
       {count}
     </div>
     <Button onClick={inc}>Increase</Button>
-    <Button onClick={asyncInc}>Increase Async</Button>
+    <Button onClick={delayedInc}>Increase Async</Button>
     <TextInput value={intToString(count)} onChange={compose(setCount, stringToInt)}/>
     <div style={{backgroundColor: color}}>Color</div>
     <Counter color='blue' onChange={setColor}/> 

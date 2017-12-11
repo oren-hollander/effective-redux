@@ -1,16 +1,38 @@
 import React, { PureComponent } from 'react'
 import { func } from 'prop-types'
-import { noop, set } from 'lodash/fp'
-import { createStore } from 'redux'
+import { set, isFunction } from 'lodash/fp'
+
 import { renderSchedulerType } from './propTypes'
-import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { idGenerator, breaker } from '../util'
 import { renderScheduler } from './hierarchicalRenderScheduler'
 
 export const Fragment = Symbol('Fragment')
-export const fragmentAction = fragmentId => set([Fragment], fragmentId)
+export const fragmentAction = fragmentId => action => {
 
-export const fragment = (fragmentId, View, reducer, subscriptions = noop) => class Comp extends PureComponent {
+  if(isFunction(action)){
+    const f = (...args) => action(...args)
+    f[Fragment] = fragmentId
+    return f
+  }
+  else {
+    return set([Fragment], fragmentId, action)
+  }
+}
+
+export const fragmentMiddleware = fragmentId => ({ getState, dispatch }) => next => action => {
+  if(action[Fragment] === fragmentId){
+    return dispatch(action) 
+  }
+  else {
+    return next(action)
+  }      
+}
+
+export const fragmentStoreEnhancer = () => nextStoreCreator => (reducer, preloadedState) => {
+  return nextStoreCreator(reducer, preloadedState)
+}
+
+export const fragment = (fragmentId, View, storeCreator) => class Comp extends PureComponent {
 
   static contextTypes = {
     renderScheduler: renderSchedulerType,
@@ -27,10 +49,17 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
   static nextFragmentId = idGenerator('effective/fragment/')
   
   componentWillMount() {
-    this.fragmentPath = `${this.context.fragmentPath}.${Comp.nextFragmentId()}`
-    this.store = createStore(reducer, effectiveStoreEnhancer(this.context.dispatch, () => this.props))
-    subscriptions(this.store.dispatch)
-    
+    this.store = storeCreator()
+    const dispatch = this.store.dispatch
+    this.store.dispatch = action => {
+      if(action[Fragment] === fragmentId){
+        return dispatch(action) 
+      }
+      else {
+        this.context.store.dispatch(action)
+      }      
+    }
+
     this.renderScheduler = renderScheduler(this.context.renderScheduler.scheduleChild)
     this.update = breaker(this.forceUpdate.bind(this))
 
@@ -45,12 +74,17 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
   }
 
   getChildContext() {
-    const dispatch = action => action[Fragment] === fragmentId 
-      ? this.store.dispatch(action) 
-      : this.context.store.dispatch(action)
+    // const dispatch = action => {
+    //   if(action[Fragment] === fragmentId){
+    //     return this.store.dispatch(action) 
+    //   }
+    //   else {
+    //     this.context.store.dispatch(action)
+    //   }
+    // }
 
     return {
-      dispatch: dispatch,
+      dispatch: this.store.dispatch,
       getState: this.store.getState,
       renderScheduler: this.renderScheduler
     }

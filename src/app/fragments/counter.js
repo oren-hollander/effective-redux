@@ -1,10 +1,10 @@
 import React from 'react'
 import { Button } from '../../ui'
-import { fragment, fragmentAction, mapStateToProps, dispatching, effect } from '../../effective'
-import { interval } from '../../effective/subscriptions'
+import { fragment, fragmentAction, mapStateToProps, dispatching } from '../../effective'
 import { delay } from '../../util'
-import { command, batch } from '../../effective/command'
-import { dispatchAction } from '../../effective/commands'
+import { partial } from 'lodash/fp'
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
 
 export const COUNTER = Symbol('Counter')
 
@@ -13,25 +13,29 @@ const counterAction = fragmentAction(COUNTER)
 const DEC = 'dec'
 const dec = () => counterAction({ type: DEC })
 
-const INC = 'inc'
-const inc = () => counterAction({ type: INC })
-
 const SET_COUNT = 'set-count'
 const setCount = count => counterAction(({ type: SET_COUNT, count }))
 
-const incAsync = command(async count => {
+const incAsync = count => counterAction(async dispatch => {
   await delay(1000)
-  return setCount(count + 1)
+  dispatch(setCount(count + 1))
 })
 
-export const reducer =  (count = 9, action, { onChange, color }) => {
+const decrease = (onChange, color) => counterAction(async dispatch => {
+  dispatch(dec())
+  dispatch(onChange(color))
+})
+
+const increase = (onChange, color) => counterAction(async (dispatch, getState) => {
+  dispatch(incAsync(getState()))
+  dispatch(onChange(color))
+})
+
+const reducer =  (count = 9, action) => {
 
   switch(action.type){
     case DEC: 
-      return effect(count - 1, dispatchAction(onChange(color)))
-    
-    case INC: 
-      return effect(count, batch(incAsync(count), dispatchAction(onChange(color))))
+      return count - 1
   
     case SET_COUNT:
       return action.count
@@ -41,16 +45,17 @@ export const reducer =  (count = 9, action, { onChange, color }) => {
   }
 }
 
-export const CounterView = dispatching(({count, color, dispatch}) => 
+export const CounterView = dispatching(({count, color, onChange, dispatch}) => 
   <div>
     <span>{count}</span>
-    <Button color={color} onClick={dec}>-</Button>
-    <Button color={color} onClick={inc}>+</Button>
+    <Button color={color} onClick={() => {
+      return decrease(onChange, color)
+    }}>-</Button>
+    <Button color={color} onClick={partial(increase, [onChange, color])}>+</Button>
   </div> 
 )
 
 export const CounterViewWithProps = mapStateToProps(state => ({ count: state }))(CounterView)
 
-const subscriptions = interval(40000, inc())
-
-export const Counter = fragment(COUNTER, CounterViewWithProps, reducer, subscriptions)
+const storeCreator = () => createStore(reducer, applyMiddleware(thunk))
+export const Counter = fragment(COUNTER, CounterViewWithProps, storeCreator)
