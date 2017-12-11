@@ -24,7 +24,7 @@ const incAsync = async count => {
   return setCount(count + 1)
 }
 
-export const reducer =  (count = 9, action, { onChange, color }) => {
+export const reducer = (count = 9, action, { onChange, color }) => {
 
   switch(action.type){
     case DEC: 
