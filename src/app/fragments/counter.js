@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from '../../ui'
-import { fragment, fragmentAction, mapStateToProps, dispatching, effect } from '../../effective'
+import { fragment, mapStateToProps, dispatching, effect } from '../../effective'
 import { interval } from '../../effective/subscriptions'
 import { delay } from '../../util'
 import { command, batch } from '../../effective/command'
