@@ -6,4 +6,4 @@ export * from './flip'
 export * from './idGenerator'
 export * from './invoke'
 export * from './noAction'
- 
+export * from './tagAction'

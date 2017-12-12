@@ -1,5 +1,6 @@
 import { isAction, isTagged, tagAction, isTaggedWith, tagActionCreator, tag } from './tagAction'
 import { Fragment } from '../effective/fragment'
+import { has } from 'lodash/fp'
 
 describe('tagAction', () => {
   describe('isAction', () => {
@@ -19,6 +20,10 @@ describe('tagAction', () => {
 
     test('should return true when action is tagged', () => {
       expect(isTagged({type: 'something', [Fragment]: Symbol('some tag')})).toBe(true)
+    })
+
+    test('should return true when action creator is tagged', () => {
+      expect(isTagged(tagActionCreator(Symbol(), () => {}))).toBe(true)
     })
   })
 

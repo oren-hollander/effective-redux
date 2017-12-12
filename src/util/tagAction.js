@@ -1,24 +1,29 @@
-import { isObject, has, get, isFunction } from 'lodash/fp'
+import { curry, isObject, has, get, isFunction } from 'lodash/fp'
 import { Fragment } from '../effective/fragment'
 
 export const isAction = action => isObject(action) && has('type', action)
 
-export const isTagged = action => has(Fragment, action)
+export const isTagged = action => action.hasOwnProperty(Fragment)
 
 export const isTaggedWith = (fragmentId, action) => get(Fragment, action) === fragmentId
 
-export const tagAction = (fragmentId, action) => isTagged(action) ? action : {...action, [Fragment]: fragmentId}
+export const tagAction = (fragmentId, action) => !isAction(action) || isTagged(action) ? action : {...action, [Fragment]: fragmentId}
 
 export const tagActionCreator = (fragmentId, actionCreator) => {
-  if(isTagged(actionCreator)){
+  if(!isFunction(actionCreator) || isTagged(actionCreator)){
     return actionCreator
   }
 
-  const taggedActionCreator = (...args) => tagAction(fragmentId, actionCreator(...args))
+  const taggedActionCreator = (...args) => {
+    return tagAction(fragmentId, actionCreator(...args))
+  }
+
   taggedActionCreator[Fragment] = fragmentId
   return taggedActionCreator
 }
 
-export const tag = (fragmentId, actionOrActionCreater) => isFunction(actionOrActionCreater) 
-  ? tagActionCreator(fragmentId, actionOrActionCreater) 
-  : tagAction(fragmentId, actionOrActionCreater)
+export const tag = curry (
+  (fragmentId, actionOrActionCreater) => isFunction(actionOrActionCreater) 
+    ? tagActionCreator(fragmentId, actionOrActionCreater) 
+    : tagAction(fragmentId, actionOrActionCreater)
+)

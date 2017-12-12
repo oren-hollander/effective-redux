@@ -16,3 +16,5 @@ const makeTestRequestAnimationFrame = () => {
 
   return [requestAnimationFrame, fireAnimationFrame]
 }
+
+test('')

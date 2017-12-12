@@ -8,16 +8,14 @@ import { dispatchAction } from '../../effective/commands'
 
 export const COUNTER = Symbol('Counter')
 
-const counterAction = fragmentAction(COUNTER)
-
 const DEC = 'dec'
-const dec = () => counterAction({ type: DEC })
+const dec = () => ({ type: DEC })
 
 const INC = 'inc'
-const inc = () => counterAction({ type: INC })
+const inc = () => ({ type: INC })
 
 const SET_COUNT = 'set-count'
-const setCount = count => counterAction(({ type: SET_COUNT, count }))
+const setCount = count => (({ type: SET_COUNT, count }))
 
 const incAsync = async count => {
   await delay(1000)

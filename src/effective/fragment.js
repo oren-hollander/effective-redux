@@ -1,11 +1,13 @@
 import React, { PureComponent } from 'react'
-import { func } from 'prop-types'
+import { func, symbol } from 'prop-types'
 import { noop, set } from 'lodash/fp'
 import { createStore } from 'redux'
+import { mapValues } from 'lodash/fp'
 import { renderSchedulerType } from './propTypes'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { idGenerator, breaker } from '../util'
 import { renderScheduler } from './hierarchicalRenderScheduler'
+import { tag, isTaggedWith, isTagged } from '../util'
 
 export const Fragment = Symbol('Fragment')
 export const fragmentAction = fragmentId => set([Fragment], fragmentId)
@@ -13,12 +15,14 @@ export const fragmentAction = fragmentId => set([Fragment], fragmentId)
 export const fragment = (fragmentId, View, reducer, subscriptions = noop) => class Comp extends PureComponent {
 
   static contextTypes = {
+    fragmentId: symbol,    
     renderScheduler: renderSchedulerType,
     dispatch: func,
     getState: func
   }
 
   static childContextTypes = {
+    fragmentId: symbol,    
     renderScheduler: renderSchedulerType,
     dispatch: func,
     getState: func
@@ -27,11 +31,11 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
   static nextFragmentId = idGenerator('effective/fragment/')
   
   componentWillMount() {
-    this.dispatch = action => action[Fragment] === fragmentId
+    this.dispatch = action => isTaggedWith(fragmentId, action) || !isTagged(action)
       ? this.store.dispatch(action) 
       : this.context.dispatch(action)    
 
-    this.store = createStore(reducer, effectiveStoreEnhancer(this.dispatch, () => this.props))
+    this.store = createStore(reducer, effectiveStoreEnhancer(this.dispatch, () => this.tagActionProps(this.props)))
     subscriptions(this.store.dispatch)
     
     this.renderScheduler = renderScheduler(this.context.renderScheduler.scheduleChild)
@@ -49,14 +53,19 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
 
   getChildContext() {
     return {
+      fragmentId,
       dispatch: this.dispatch,
       getState: this.store.getState,
       renderScheduler: this.renderScheduler
     }
   }
 
+  tagActionProps(props) {
+    return mapValues(tag(this.context.fragmentId), props)
+  }
+
   render(){
     this.update.off()
-    return <View {...this.props}/>
+    return <View {...this.tagActionProps(this.props)}/>
   }
 }
