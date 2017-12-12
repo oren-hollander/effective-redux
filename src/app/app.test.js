@@ -6,8 +6,8 @@ import { command, batch, execute } from '../effective/command'
 describe('reducer', () => {
 
   test('do mutilple things', () => {
-    expect(reducer({}, doMultipleThings())).toEqual(effect({}, waitASecond(waitIsOver())))
-    expect(reducer({}, waitIsOver())).toEqual(effect({}, batch(doOneThing(), doOtherThing())))
+    expect(reducer({}, doMultipleThings)).toEqual(effect({}, waitASecond(waitIsOver)))
+    expect(reducer({}, waitIsOver)).toEqual(effect({}, batch(doOneThing(), doOtherThing())))
   })
 
   test('waitASecond', () => {

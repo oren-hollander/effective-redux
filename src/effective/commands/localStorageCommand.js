@@ -1,17 +1,18 @@
 import { defaultTo } from 'lodash/fp'
 import { command } from '../command'
+import { createAction } from '../../util/parametricAction'
 
-export const setItemToLocalStorage = command(async (successActionCreator, key, value) =>
+export const setItemToLocalStorage = command(async (successAction, key, value) =>
 {
   window.localStorage.setItem(key, JSON.stringify(value))
-  return successActionCreator()
+  return successAction
 })
 
-export const getItemFromLocalStorage = command(async (successActionCreator, key) => {
+export const getItemFromLocalStorage = command(async (successAction, key) => {
   try {
-    return successActionCreator(defaultTo(undefined, JSON.parse(window.localStorage.getItem(key))))
+    return createAction(successAction, defaultTo(undefined, JSON.parse(window.localStorage.getItem(key))))
   }
   catch(e){
-    return successActionCreator({})
+    return createAction(successAction, {})
   }
 })

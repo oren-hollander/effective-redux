@@ -1,8 +1,9 @@
 import { identity } from 'lodash/fp'
 import { command } from '../command'
+import { createAction } from '../../util/parametricAction'
 
 export const fetch = command((input, init, successAction, failureAction, mapResponse = identity, mapError = identity) => 
   fetch(input, init)
-    .then(response => successAction(mapResponse(response)))
-    .catch(error => failureAction(mapError(error)))
+    .then(response => createAction(successAction, mapResponse(response)))
+    .catch(error => createAction(failureAction, mapError(error)))
 )

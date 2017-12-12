@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { dispatching } from '../effective/dispatching'
 import { string, func } from 'prop-types'
-import { actionPropType } from '../util/parametricAction'
+import { actionPropType, createAction } from '../util/parametricAction'
 
 export const TextInput = dispatching(class TextInput extends Component {
   static propTypes = {
@@ -24,7 +24,7 @@ export const TextInput = dispatching(class TextInput extends Component {
       value={this.state.value} 
       onChange={e => {
         this.setState({value: e.target.value})
-        this.props.dispatch(this.props.onChange, e.target.value)
+        this.props.dispatch(createAction(this.props.onChange, e.target.value))
       }}
     />
   }

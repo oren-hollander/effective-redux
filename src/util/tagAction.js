@@ -5,7 +5,9 @@ export const isAction = action => isObject(action) && has('type', action)
 
 export const isTagged = action => action.hasOwnProperty(Fragment)
 
-export const isTaggedWith = (fragmentId, action) => get(Fragment, action) === fragmentId
+export const getActionTag = action => get(Fragment, action) 
+
+export const isTaggedWith = (fragmentId, action) => getActionTag(action) === fragmentId
 
 export const tagAction = (fragmentId, action) => !isAction(action) || isTagged(action) ? action : {...action, [Fragment]: fragmentId}
 

@@ -1,25 +1,25 @@
-import { shape, string, object } from 'prop-types'
-import { reduce, mapValues, isObject, has, get } from 'lodash/fp'
+import { shape, string } from 'prop-types'
+import { curry, fromPairs, map, isEmpty } from 'lodash/fp'
+import { isTagged, tagAction, getActionTag } from '../util/tagAction'
+
+const mapWithIndex = map.convert({cap: false})
 
 export const actionPropType = shape({
   type: string
 })
 
-// const actionParamsPropType = object
+export const defineAction = (type, ...paramNames) => isEmpty(paramNames) ? { type } : { type, paramNames } 
 
-export const ActionParam = Symbol('ActionParam')
-export const actionParam = ordinal => ({[ActionParam]: ordinal})
+export const createAction = curry((actionDefinition, ...params) => {
+  const action = {
+    type: actionDefinition.type, 
+    ...fromPairs(mapWithIndex((paramName, index) => [paramName, params[index]], actionDefinition.paramNames))
+  }
 
-export const createAction = (parametricAction, ...params) => mapValues(param => {
-  if(isObject(param) && has(ActionParam, param)){
-    const index = get(ActionParam, param)
-    return params[index]
+  if(isTagged(actionDefinition)){
+    return tagAction(getActionTag(actionDefinition), action)
   }
   else {
-    return param
+    return action    
   }
-}, parametricAction)
-
-export const dispatchParametric = dispatch => (parametricAction, ...params) => {
-  dispatch(createAction(parametricAction, ...params))
-}
+})
