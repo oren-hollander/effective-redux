@@ -8,6 +8,7 @@ import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { idGenerator, breaker } from '../util'
 import { renderScheduler } from './hierarchicalRenderScheduler'
 import { tag, isTaggedWith, isTagged } from '../util'
+import { dispatchParametric } from '../util/parametricAction'
 
 export const Fragment = Symbol('Fragment')
 export const fragmentAction = fragmentId => set([Fragment], fragmentId)
@@ -31,12 +32,14 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
   static nextFragmentId = idGenerator('effective/fragment/')
   
   componentWillMount() {
-    this.dispatch = action => isTaggedWith(fragmentId, action) || !isTagged(action)
+    this.fragmentInstanceId = Symbol(fragmentId.toString())
+    this.dispatch = dispatchParametric(action => isTaggedWith(this.fragmentInstanceId, action) || !isTagged(action)
       ? this.store.dispatch(action) 
       : this.context.dispatch(action)    
+    )
 
     this.store = createStore(reducer, effectiveStoreEnhancer(this.dispatch, () => this.tagActionProps(this.props)))
-    subscriptions(this.store.dispatch)
+    subscriptions(this.dispatch)
     
     this.renderScheduler = renderScheduler(this.context.renderScheduler.scheduleChild)
     this.update = breaker(this.forceUpdate.bind(this))
@@ -53,7 +56,7 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
 
   getChildContext() {
     return {
-      fragmentId,
+      fragmentId: this.fragmentInstanceId,
       dispatch: this.dispatch,
       getState: this.store.getState,
       renderScheduler: this.renderScheduler

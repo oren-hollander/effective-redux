@@ -1,4 +1,4 @@
-import { isUndefined } from 'lodash/fp'
+import { isUndefined, defaultTo } from 'lodash/fp'
 
 import { 
   INC, ASYNC_INC, SET_COUNT, delayedInc, SET_COLOR, LOAD, UNLOAD, INIT_STATE, DO_MULTIPLE_THINGS, WAIT_IS_OVER, 
@@ -14,6 +14,7 @@ const initialState = {
   count: 0,
   color: 'lightgrey'
 }
+const stringToInt = str => defaultTo(0, Number.parseInt(str, 10))
 
 export const reducer = (state = initialState, action) => {
   switch(action.type){
@@ -22,7 +23,7 @@ export const reducer = (state = initialState, action) => {
     case ASYNC_INC: 
       return effect(state, delayedInc(state.count))
     case SET_COUNT:
-      return { ...state, count: action.count }
+      return { ...state, count: stringToInt(action.count) }
     case SET_COLOR:
       return { ...state, color: action.color}
     case LOAD: 

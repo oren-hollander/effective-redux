@@ -1,6 +1,7 @@
 import { constant } from 'lodash/fp'
 import { delay } from '../util'
 import { command } from '../effective/command'
+import { actionParam, createAction } from '../util/parametricAction'
 
 export const INC = 'inc'
 export const inc = () => ({ type: INC })
@@ -9,11 +10,13 @@ export const ASYNC_INC = 'async-inc'
 export const asyncInc = () => ({ type: ASYNC_INC })
 
 export const SET_COUNT = 'set-count'
-export const setCount = count => ({ type: SET_COUNT, count })
+// export const setCount = count => ({ type: SET_COUNT, count })
+export const setCount = { type: SET_COUNT, count: actionParam(0)}
 
 export const delayedInc = command(async count => {
   await delay(1000)
-  return setCount(count + 1)
+  // return setCount(count + 1)
+  return createAction(setCount, count + 1)
 })
 
 export const SET_COLOR = 'set-color'

@@ -10,7 +10,6 @@ const randomColor = () => {
   return colors[i]
 }
 
-const stringToInt = str => defaultTo(0, Number.parseInt(str, 10))
 
 const intToString = int => Number(int).toString()
 
@@ -21,7 +20,7 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
     </div>
     <Button onClick={inc}>Increase</Button>
     <Button onClick={asyncInc}>Increase Async</Button>
-    <TextInput value={intToString(count)} onChange={compose(setCount, stringToInt)}/>
+    <TextInput value={intToString(count)} onChange={setCount}/>
     <div style={{backgroundColor: color}}>Color</div>
     <Counter color='blue' onChange={setColor}/> 
     <Counter color='green' onChange={setColor}/> 

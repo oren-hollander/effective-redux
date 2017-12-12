@@ -5,6 +5,7 @@ import { interval } from '../../effective/subscriptions'
 import { delay } from '../../util'
 import { command, batch } from '../../effective/command'
 import { dispatchAction } from '../../effective/commands'
+import { actionParam, createAction } from '../../util/parametricAction'
 
 export const COUNTER = Symbol('Counter')
 
@@ -15,11 +16,12 @@ const INC = 'inc'
 const inc = () => ({ type: INC })
 
 const SET_COUNT = 'set-count'
-const setCount = count => (({ type: SET_COUNT, count }))
+// const setCount = count => (({ type: SET_COUNT, count }))
+const setCount = { type: SET_COUNT, count: actionParam(0) }
 
 const incAsync = async count => {
   await delay(1000)
-  return setCount(count + 1)
+  return createAction(setCount, count + 1)
 }
 
 export const reducer = (count = 9, action, { onChange, color }) => {
