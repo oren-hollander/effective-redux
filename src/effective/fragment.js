@@ -12,7 +12,7 @@ import { tag, isTaggedWith, isTagged } from '../util'
 export const Fragment = Symbol('Fragment')
 export const fragmentAction = fragmentId => set([Fragment], fragmentId)
 
-export const fragment = (fragmentId, View, reducer, subscriptions = noop) => class Comp extends PureComponent {
+export const fragment = (View, reducer, subscriptions = noop) => class Comp extends PureComponent {
 
   static contextTypes = {
     fragmentId: symbol,    
@@ -31,9 +31,9 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
   static nextFragmentId = idGenerator('effective/fragment/')
   
   componentWillMount() {
-    this.fragmentInstanceId = Symbol(fragmentId.toString())
+    this.fragmentId = Symbol()
     this.dispatch = action => { 
-      return isTaggedWith(this.fragmentInstanceId, action) || !isTagged(action)
+      return isTaggedWith(this.fragmentId, action) || !isTagged(action)
       ? this.store.dispatch(action) 
       : this.context.dispatch(action)    
     }
@@ -56,7 +56,7 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
 
   getChildContext() {
     return {
-      fragmentId: this.fragmentInstanceId,
+      fragmentId: this.fragmentId,
       dispatch: this.dispatch,
       getState: this.store.getState,
       renderScheduler: this.renderScheduler
@@ -69,6 +69,6 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
 
   render(){
     this.update.off()
-    return <View { ...this.tagActionProps(this.props) } fragmentInstanceId={this.fragmentInstanceId}/>
+    return <View { ...this.tagActionProps(this.props) } fragmentId={this.fragmentId}/>
   }
 }

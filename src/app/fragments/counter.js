@@ -9,8 +9,6 @@ import { createAction, defineAction } from '../../util/parametricAction'
 import { openPanel } from './panels'
 import { tagAction } from '../../util/tagAction'
 
-export const COUNTER = Symbol('Counter')
-
 const DEC = 'dec'
 const dec = defineAction(DEC)
 
@@ -42,12 +40,12 @@ export const reducer = (count = 9, action, { onChange, color }) => {
   }
 }
 
-export const CounterView = dispatching(({fragmentInstanceId, count, color, dispatch}) => 
+export const CounterView = dispatching(({fragmentId, count, color, dispatch}) => 
   <div>
     <span>{count}</span>
     <Button color={color} onClick={dec}>-</Button>
     <Button color={color} onClick={inc}>+</Button>
-    <Button onClick={createAction(openPanel, tagAction(fragmentInstanceId, setCount))}>Edit</Button>
+    <Button onClick={createAction(openPanel, tagAction(fragmentId, setCount))}>Edit</Button>
   </div> 
 )
 
@@ -55,4 +53,4 @@ export const CounterViewWithProps = mapStateToProps(state => ({ count: state }))
 
 const subscriptions = interval(400000, inc)
 
-export const Counter = fragment(COUNTER, CounterViewWithProps, reducer, subscriptions)
+export const Counter = fragment(CounterViewWithProps, reducer, subscriptions)

@@ -17,7 +17,7 @@ export const application = (rootElementId, View, reducer, subscriptions = noop) 
 
   const renderApp = () => render (
     <Provider fragmentId={applicationFragmentId} renderScheduler={scheduler} dispatch={store.dispatch} getState={store.getState}> 
-      <View fragmentInstanceId={applicationFragmentId}/>
+      <View fragmentId={applicationFragmentId}/>
     </Provider>, 
     rootElement
   )

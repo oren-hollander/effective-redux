@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { TextInput, Button } from '../ui'
-import { inc, asyncInc, setCount, setColor, doMultipleThings } from './actions'
+import { inc, asyncInc, setCount, setColor, increaseTwice } from './actions'
 import { Counter } from './fragments'
 
 const randomColor = () => {
@@ -30,7 +30,7 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
           <Counter color='orange' onChange={setColor}/>
       </Fragment>    
     }
-    <Button onClick={doMultipleThings}> Do Multiple things</Button>
+    <Button onClick={increaseTwice}>Increase Twice</Button>
 
   </div>
 }

@@ -1,8 +1,8 @@
 import { isUndefined, defaultTo } from 'lodash/fp'
 
 import { 
-  INC, ASYNC_INC, SET_COUNT, delayedInc, SET_COLOR, LOAD, UNLOAD, INIT_STATE, DO_MULTIPLE_THINGS, WAIT_IS_OVER, 
-  initState, waitIsOver, waitASecond, doOneThing, doOtherThing
+  INC, ASYNC_INC, SET_COUNT, delayedInc, SET_COLOR, LOAD, UNLOAD, INIT_STATE, INCREASE_TWICE, WAIT_IS_OVER, 
+  initState, waitIsOver, waitASecond, firstIncrease, secondIncrease
 } from './actions'
 
 import { effect } from '../effective'
@@ -32,10 +32,10 @@ export const reducer = (state = initialState, action) => {
       return isUndefined(action.state) ? state : action.state
     case UNLOAD:
       return effect(state, setItemToLocalStorage(noAction, 'app-state', state))
-    case DO_MULTIPLE_THINGS:
+    case INCREASE_TWICE:
       return effect(state, waitASecond(waitIsOver))
     case WAIT_IS_OVER:
-      return effect(state, batch(doOneThing(), doOtherThing()))
+      return effect(state, batch(firstIncrease(), secondIncrease()))
     default:
       return state
   }

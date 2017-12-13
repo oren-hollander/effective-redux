@@ -29,14 +29,14 @@ export const unload = defineAction(UNLOAD)
 export const INIT_STATE = 'init-state'
 export const initState = defineAction(INIT_STATE, 'state')
 
-export const DO_MULTIPLE_THINGS = 'do-multiple-things'
-export const doMultipleThings = defineAction(DO_MULTIPLE_THINGS)
+export const INCREASE_TWICE = 'increase-twice'
+export const increaseTwice = defineAction(INCREASE_TWICE)
 
 export const WAIT_IS_OVER = 'wait-is-over'
 export const waitIsOver = defineAction(WAIT_IS_OVER)
 
 export const waitASecondImpl = delay => command(action => delay(1000).then(constant(action)))
-
 export const waitASecond = waitASecondImpl(delay)
-export const doOneThing = command(() => delay(1000).then(constant(inc)))
-export const doOtherThing = command(() => delay(2000).then(constant(inc)))
+
+export const firstIncrease = command(() => delay(1000).then(constant(inc)))
+export const secondIncrease = command(() => delay(2000).then(constant(inc)))
