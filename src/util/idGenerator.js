@@ -1,4 +1,9 @@
+export const numberGenerator = function*(start = 0) {
+  while(true)
+      yield start++
+}
+
 export const idGenerator = prefix => {
-  let count = 1
-  return () => `${prefix}${count++}`
+  let numbers = numberGenerator(1)
+  return () => `${prefix}${numbers.next().value}`
 }
