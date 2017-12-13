@@ -6,7 +6,7 @@ import { delay } from '../../util'
 import { command, batch } from '../../effective/command'
 import { dispatchAction } from '../../effective/commands'
 import { createAction, defineAction } from '../../util/parametricAction'
-import { openPanel } from '../actions'
+import { openPanel } from './panels'
 import { tagAction } from '../../util/tagAction'
 
 export const COUNTER = Symbol('Counter')
