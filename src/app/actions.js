@@ -2,6 +2,8 @@ import { constant } from 'lodash/fp'
 import { delay } from '../util'
 import { command } from '../effective/command'
 import { createAction, defineAction } from '../util/parametricAction'
+import { tagAction } from '../util/tagAction'
+import { applicationFragmentId} from '../effective/application'
 
 export const INC = 'inc'
 export const inc = { type: INC }
@@ -40,3 +42,6 @@ export const waitASecondImpl = delay => command(action => delay(1000).then(const
 export const waitASecond = waitASecondImpl(delay)
 export const doOneThing = command(() => delay(1000).then(constant(inc)))
 export const doOtherThing = command(() => delay(2000).then(constant(inc)))
+
+export const OPEN_PANEL = 'open-panel'
+export const openPanel = tagAction(applicationFragmentId, defineAction(OPEN_PANEL, 'onOk'))

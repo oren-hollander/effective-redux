@@ -69,6 +69,6 @@ export const fragment = (fragmentId, View, reducer, subscriptions = noop) => cla
 
   render(){
     this.update.off()
-    return <View {...this.tagActionProps(this.props)}/>
+    return <View { ...this.tagActionProps(this.props) } fragmentInstanceId={this.fragmentInstanceId}/>
   }
 }

@@ -6,6 +6,8 @@ import { delay } from '../../util'
 import { command, batch } from '../../effective/command'
 import { dispatchAction } from '../../effective/commands'
 import { createAction, defineAction } from '../../util/parametricAction'
+import { openPanel } from '../actions'
+import { tagAction } from '../../util/tagAction'
 
 export const COUNTER = Symbol('Counter')
 
@@ -40,11 +42,12 @@ export const reducer = (count = 9, action, { onChange, color }) => {
   }
 }
 
-export const CounterView = dispatching(({count, color, dispatch}) => 
+export const CounterView = dispatching(({fragmentInstanceId, count, color, dispatch}) => 
   <div>
     <span>{count}</span>
     <Button color={color} onClick={dec}>-</Button>
     <Button color={color} onClick={inc}>+</Button>
+    <Button onClick={createAction(openPanel, tagAction(fragmentInstanceId, setCount))}>Edit</Button>
   </div> 
 )
 

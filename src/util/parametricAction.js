@@ -5,7 +5,7 @@ import { isTagged, tagAction, getActionTag } from '../util/tagAction'
 const mapWithIndex = map.convert({cap: false})
 
 export const actionPropType = shape({
-  type: string
+  type: string.isRequired
 })
 
 export const defineAction = (type, ...paramNames) => isEmpty(paramNames) ? { type } : { type, paramNames } 

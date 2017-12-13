@@ -7,7 +7,8 @@ import { noop } from 'lodash/fp'
 import { renderScheduler } from './hierarchicalRenderScheduler'
 import { requestAnimationFrame } from '../util'
 
-const applicationFragmentId = Symbol('application fragment')
+export const applicationFragmentId = Symbol('application fragment')
+
 export const application = (rootElementId, View, reducer, subscriptions = noop) => {
 
   const store = createStore(reducer, effectiveStoreEnhancer())
@@ -16,7 +17,7 @@ export const application = (rootElementId, View, reducer, subscriptions = noop) 
 
   const renderApp = () => render (
     <Provider fragmentId={applicationFragmentId} renderScheduler={scheduler} dispatch={store.dispatch} getState={store.getState}> 
-      <View/>
+      <View fragmentInstanceId={applicationFragmentId}/>
     </Provider>, 
     rootElement
   )
