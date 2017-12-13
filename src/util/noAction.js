@@ -1,1 +1,1 @@
-export const noAction = () => ({ type: '' })
+export const noAction = { type: '' }

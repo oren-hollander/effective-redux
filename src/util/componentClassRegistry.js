@@ -1,20 +1,40 @@
-import { set, get, unset, flip } from 'lodash/fp'
+import { forEach, has, flow, eq, set, get, unset, flip, concat, without, partition } from 'lodash/fp'
+import { invoke } from './invoke'
 
 export const componentClassRegistry = () => {
-  let components = []
-  const register = (componentClassId, componentClass) => {
+  let components = {}
+  let resolvers = []
+
+  const registerComponentClass = (componentClassId, componentClass) => {
     components = set(componentClassId, componentClass, components)
+    const [waiting, nonWaiting] = partition(flow(get('componentClassId'), eq(componentClassId)), resolvers)
+    resolvers = nonWaiting
+    forEach(
+      flow(
+        get('resolve'), 
+        invoke(componentClass)
+      ), 
+      waiting
+    )
   }
 
-  const unregister = componentClassId => {
+  const unregisterComponentClass = componentClassId => {
     components = unset(componentClassId, components)
   }
 
   const getComponentClass = componentClassId => get(componentClassId, components)
 
+  const waitForComponentClass = async componentClassId => 
+    has(componentClassId, components) 
+      ? get(componentClassId, components)
+      : new Promise(resolve => {
+        resolvers = concat(resolvers, { componentClassId, resolve })
+      })
+
   return {
-    register,
-    unregister,
-    get: getComponentClass
+    registerComponentClass,
+    unregisterComponentClass,
+    getComponentClass,
+    waitForComponentClass
   }
 }
