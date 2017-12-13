@@ -25,7 +25,7 @@ test('create action', () => {
 })
 
 test('create taged action', () => {
-  const fragmentId = Symbol('myFragment')
+  const fragmentId = 'myFragment'
   const action = defineAction('my type', 'value')
   const boundAction = bindAction(fragmentId, action)
   expect(createAction(boundAction, 9)).toEqual({ type: 'my type', value: 9, [fragmentIdKey]: fragmentId })

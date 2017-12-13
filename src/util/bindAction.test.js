@@ -44,7 +44,7 @@ describe('tagAction', () => {
     })
 
     test('should not be tagged when tagged with a different fragment id', () => {
-      const otherFragmentId = Symbol('my other fragment')
+      const otherFragmentId = 'my other fragment'
       expect(isBoundTo(otherFragmentId, bindAction(fragmentId, {type: 'somthing'}))).toBe(false)
     })    
     
