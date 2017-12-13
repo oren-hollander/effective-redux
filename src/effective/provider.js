@@ -1,12 +1,12 @@
 import { Children } from 'react'
 import { withContext } from 'recompose'
-import { func, symbol } from 'prop-types'
+import { func, string } from 'prop-types'
 import { renderSchedulerType } from './propTypes'
 
 const OnlyChild = ({children}) => Children.only(children)
 
 export const Provider = withContext({ 
-  fragmentId: symbol,
+  fragmentId: string,
   dispatch: func,
   getState: func,
   renderScheduler: renderSchedulerType

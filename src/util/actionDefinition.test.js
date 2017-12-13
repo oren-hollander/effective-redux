@@ -1,6 +1,6 @@
-import { createAction, defineAction } from './parametricAction'
-import { tagAction } from './tagAction'
-import { Fragment } from '../effective/fragment'
+import { createAction, defineAction } from './actionDefinition'
+import { bindAction, fragmentIdKey } from './bindAction'
+// import { Fragment } from '../effective/fragment'
 import { isEqual, identity, mapValues, keys } from 'lodash/fp'
 
 expect.extend({
@@ -27,8 +27,8 @@ test('create action', () => {
 test('create taged action', () => {
   const fragmentId = Symbol('myFragment')
   const action = defineAction('my type', 'value')
-  const taggedAction = tagAction(fragmentId, action)
-  expect(createAction(taggedAction, 9)).toBeEqual({type: 'my type', value: 9, [Fragment]: fragmentId})
+  const boundAction = bindAction(fragmentId, action)
+  expect(createAction(boundAction, 9)).toEqual({ type: 'my type', value: 9, [fragmentIdKey]: fragmentId })
 })
 
 test('define action', () => {

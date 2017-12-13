@@ -7,7 +7,7 @@ import { noop } from 'lodash/fp'
 import { renderScheduler } from './hierarchicalRenderScheduler'
 import { requestAnimationFrame } from '../util'
 
-export const applicationFragmentId = Symbol('application fragment')
+export const applicationFragmentId = 'root-fragment'
 
 export const application = (rootElementId, View, reducer, subscriptions = noop) => {
 

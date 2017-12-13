@@ -1,6 +1,6 @@
 import { defaultTo } from 'lodash/fp'
 import { command } from '../command'
-import { createAction } from '../../util/parametricAction'
+import { createAction } from '../../util/actionDefinition'
 
 export const setItemToLocalStorage = command(async (successAction, key, value) =>
 {

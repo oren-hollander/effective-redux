@@ -1,7 +1,7 @@
-import { tagAction } from '../../util/tagAction'
-import { defineAction } from '../../util/parametricAction'
+import { bindAction } from '../../util/bindAction'
+import { defineAction } from '../../util/actionDefinition'
 
 const panelsFragmentId = 'panels'
 
 export const OPEN_PANEL = 'open-panel'
-export const openPanel = tagAction(panelsFragmentId, defineAction(OPEN_PANEL, 'onOk'))
+export const openPanel = bindAction(panelsFragmentId, defineAction(OPEN_PANEL, 'onOk'))

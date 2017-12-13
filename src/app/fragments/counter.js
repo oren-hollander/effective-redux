@@ -5,9 +5,9 @@ import { interval } from '../../effective/subscriptions'
 import { delay } from '../../util'
 import { command, batch } from '../../effective/command'
 import { dispatchAction } from '../../effective/commands'
-import { createAction, defineAction } from '../../util/parametricAction'
+import { createAction, defineAction } from '../../util/actionDefinition'
 import { openPanel } from './panels'
-import { tagAction } from '../../util/tagAction'
+import { bindAction } from '../../util/bindAction'
 
 const DEC = 'dec'
 const dec = defineAction(DEC)
@@ -45,7 +45,7 @@ export const CounterView = dispatching(({fragmentId, count, color, dispatch}) =>
     <span>{count}</span>
     <Button color={color} onClick={dec}>-</Button>
     <Button color={color} onClick={inc}>+</Button>
-    <Button onClick={createAction(openPanel, tagAction(fragmentId, setCount))}>Edit</Button>
+    <Button onClick={createAction(openPanel, bindAction(fragmentId, setCount))}>Edit</Button>
   </div> 
 )
 

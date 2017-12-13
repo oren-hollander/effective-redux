@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { dispatching } from '../effective/dispatching'
 import { string, func } from 'prop-types'
-import { actionPropType, createAction } from '../util/parametricAction'
+import { actionPropType, createAction } from '../util/actionDefinition'
 
 export const TextInput = dispatching(class TextInput extends Component {
   static propTypes = {

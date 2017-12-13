@@ -1,7 +1,7 @@
 import { constant } from 'lodash/fp'
 import { delay } from '../util'
 import { command } from '../effective/command'
-import { createAction, defineAction } from '../util/parametricAction'
+import { createAction, defineAction } from '../util/actionDefinition'
 
 export const INC = 'inc'
 export const inc = { type: INC }

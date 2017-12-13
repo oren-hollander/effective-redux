@@ -1,44 +1,41 @@
 import React, { PureComponent } from 'react'
-import { func, symbol } from 'prop-types'
-import { noop, set } from 'lodash/fp'
+import { func, string } from 'prop-types'
+import { noop } from 'lodash/fp'
 import { createStore } from 'redux'
 import { mapValues } from 'lodash/fp'
 import { renderSchedulerType } from './propTypes'
 import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
 import { idGenerator, breaker } from '../util'
 import { renderScheduler } from './hierarchicalRenderScheduler'
-import { tag, isTaggedWith, isTagged } from '../util'
-
-export const Fragment = Symbol('Fragment')
-export const fragmentAction = fragmentId => set([Fragment], fragmentId)
+import { bindAction, isBoundTo, isBound } from '../util/bindAction'
 
 export const fragment = (View, reducer, subscriptions = noop) => class Comp extends PureComponent {
 
   static contextTypes = {
-    fragmentId: symbol,    
+    fragmentId: string,    
     renderScheduler: renderSchedulerType,
     dispatch: func,
     getState: func
   }
 
   static childContextTypes = {
-    fragmentId: symbol,    
+    fragmentId: string,    
     renderScheduler: renderSchedulerType,
     dispatch: func,
     getState: func
   }
 
-  static nextFragmentId = idGenerator('effective/fragment/')
+  static fragmentIdGenerator = idGenerator('fragment-')
   
   componentWillMount() {
-    this.fragmentId = Symbol()
+    this.fragmentId = Comp.fragmentIdGenerator()
     this.dispatch = action => { 
-      return isTaggedWith(this.fragmentId, action) || !isTagged(action)
+      return isBoundTo(this.fragmentId, action) || !isBound(action)
       ? this.store.dispatch(action) 
       : this.context.dispatch(action)    
     }
 
-    this.store = createStore(reducer, effectiveStoreEnhancer(this.dispatch, () => this.tagActionProps(this.props)))
+    this.store = createStore(reducer, effectiveStoreEnhancer(this.dispatch, () => this.bindActionProps(this.props)))
     subscriptions(this.dispatch)
     
     this.renderScheduler = renderScheduler(this.context.renderScheduler.scheduleChild)
@@ -63,12 +60,12 @@ export const fragment = (View, reducer, subscriptions = noop) => class Comp exte
     }
   }
 
-  tagActionProps(props) {
-    return mapValues(tag(this.context.fragmentId), props)
+  bindActionProps(props) {
+    return mapValues(bindAction(this.context.fragmentId), props)
   }
 
   render(){
     this.update.off()
-    return <View { ...this.tagActionProps(this.props) } fragmentId={this.fragmentId}/>
+    return <View { ...this.bindActionProps(this.props) } fragmentId={this.fragmentId}/>
   }
 }
