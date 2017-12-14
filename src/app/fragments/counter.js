@@ -51,6 +51,6 @@ export const CounterView = dispatching(({fragmentId, count, color, dispatch}) =>
 
 export const CounterViewWithProps = mapStateToProps(state => ({ count: state }))(CounterView)
 
-const subscriptions = interval(400000, inc)
+const subscriptions = interval(100000, inc)
 
 export const Counter = fragment(CounterViewWithProps, reducer, subscriptions)

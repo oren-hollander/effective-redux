@@ -1,7 +1,7 @@
 import { getContext, withProps, compose } from 'recompose'
-import { func } from 'prop-types'
+import { storePropType } from './propTypes'
 
 export const dispatching = compose(
-  getContext({dispatch: func}),
-  withProps(({dispatch}) => ({dispatch}))
+  getContext({ fragmentStore: storePropType }),
+  withProps(({ fragmentStore }) => ({ dispatch: fragmentStore.dispatch }))
 )

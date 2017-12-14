@@ -1,5 +1,5 @@
-import { forEach, has, flow, eq, set, get, unset, flip, concat, without, partition } from 'lodash/fp'
-import { invoke } from './invoke'
+import { forEach, has, flow, eq, set, get, unset, concat, partition } from 'lodash/fp'
+import { invoke } from '../util/invoke'
 
 export const componentClassRegistry = () => {
   let components = {}

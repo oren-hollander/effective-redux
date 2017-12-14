@@ -14,7 +14,7 @@ const noEffect = makeEffect({}, [])
 
 const isEffect = value => value[Effect]
 
-const liftEffect = lift(isEffect, flip(makeEffect)([]))
+export const liftEffect = lift(isEffect, flip(makeEffect)([]))
 
 export const effect = (state, commands) => makeEffect(state, liftArray(commands))
 

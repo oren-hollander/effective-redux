@@ -1,61 +1,56 @@
 import React, { PureComponent } from 'react'
-import { func, string } from 'prop-types'
+import { string } from 'prop-types'
 import { noop } from 'lodash/fp'
-import { createStore } from 'redux'
 import { mapValues } from 'lodash/fp'
-import { renderSchedulerType } from './propTypes'
-import { effectiveStoreEnhancer } from './effectiveStoreEnhancer'
+import { renderSchedulerType, storePropType, fragmentReducersPropType } from './propTypes'
 import { idGenerator, breaker } from '../util'
 import { renderScheduler } from './hierarchicalRenderScheduler'
-import { bindAction, isBoundTo, isBound } from '../util/bindAction'
+import { bindAction } from '../util/bindAction'
+import { fragmentStore } from './fragmentStore'
 
 export const fragment = (View, reducer, subscriptions = noop) => class Comp extends PureComponent {
 
   static contextTypes = {
-    fragmentId: string,    
-    renderScheduler: renderSchedulerType,
-    dispatch: func,
-    getState: func
+    store: storePropType,
+    fragmentId: string,  
+    fragmentStore: storePropType,
+    fragmentReducers: fragmentReducersPropType,
+    renderScheduler: renderSchedulerType
   }
 
   static childContextTypes = {
-    fragmentId: string,    
-    renderScheduler: renderSchedulerType,
-    dispatch: func,
-    getState: func
+    fragmentId: string,  
+    fragmentStore: storePropType,  
+    renderScheduler: renderSchedulerType
   }
 
   static fragmentIdGenerator = idGenerator('fragment-')
   
   componentWillMount() {
     this.fragmentId = Comp.fragmentIdGenerator()
-    this.dispatch = action => { 
-      return isBoundTo(this.fragmentId, action) || !isBound(action)
-      ? this.store.dispatch(action) 
-      : this.context.dispatch(action)    
-    }
 
-    this.store = createStore(reducer, effectiveStoreEnhancer(this.dispatch, () => this.bindActionProps(this.props)))
-    subscriptions(this.dispatch)
+    this.fragmentStore = fragmentStore(this.fragmentId, this.context.store)
+    this.context.fragmentReducers.install(this.fragmentId, reducer, this.fragmentStore.dispatch, () => this.bindActionProps(this.props))
+    subscriptions(this.fragmentStore.dispatch)
     
     this.renderScheduler = renderScheduler(this.context.renderScheduler.scheduleChild)
     this.update = breaker(this.forceUpdate.bind(this))
 
-    this.unsubscribe = this.store.subscribe(() => {
+    this.unsubscribe = this.fragmentStore.subscribe(() => {
       this.update.on()
       this.renderScheduler.scheduleOwn().then(this.update)
     })
   }
 
   componentWillUnmount() {
+    this.context.fragmentReducers.uninstall(this.fragmentId)
     this.unsubscribe()
   }
 
   getChildContext() {
     return {
       fragmentId: this.fragmentId,
-      dispatch: this.dispatch,
-      getState: this.store.getState,
+      fragmentStore: this.fragmentStore,
       renderScheduler: this.renderScheduler
     }
   }

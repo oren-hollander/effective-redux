@@ -2,13 +2,13 @@ import React, { Fragment } from 'react'
 import { TextInput, Button } from '../ui'
 import { inc, asyncInc, setCount, setColor, increaseTwice } from './actions'
 import { Counter } from './fragments'
+import { RegistryComponent } from '../componentRegistry/registryComponent'
 
 const randomColor = () => {
   const colors = ['red', 'green', 'blue', 'orange']
   const i = Math.floor(Math.random() * colors.length)
   return colors[i]
 }
-
 
 const intToString = int => Number(int).toString()
 
@@ -31,6 +31,6 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
       </Fragment>    
     }
     <Button onClick={increaseTwice}>Increase Twice</Button>
-
+    <RegistryComponent componentClassId='panel'/>
   </div>
 }
