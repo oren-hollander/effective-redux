@@ -9,7 +9,7 @@ import { dispatchAction } from '../../effective/commands'
 import { createAction, defineAction } from '../../util/actionDefinition'
 import { openPanel, setPanelResult } from './panels'
 import { bindAction } from '../../util/bindAction'
-import { intToString } from '../../util/stringConversion'
+import { intToString, stringToInt } from '../../util/stringConversion'
 
 const DEC = 'dec'
 const dec = defineAction(DEC)
@@ -30,10 +30,10 @@ const incAsync = async count => {
 
 const counterEditorReducer = (state, action) => state
 
-const CounterEditorView = ({ count }) => 
+const CounterEditorView = ({ value }) => 
   <div>
     <div>Counter Editor</div>
-    <div><TextInput value={count} onChange={setPanelResult}/></div>
+    <div><TextInput value={value} onChange={setPanelResult}/></div>
   </div>
 
 const CounterEditor = fragment(CounterEditorView, counterEditorReducer)
@@ -41,7 +41,7 @@ const CounterEditor = fragment(CounterEditorView, counterEditorReducer)
 const openEditPanelCommand = command(async (fragmentId, componentClassRegistry, count) => {
   if(isUndefined(componentClassRegistry.getComponentClass(fragmentId)))
     componentClassRegistry.registerComponentClass('counterEditor', CounterEditor)
-  return createAction(openPanel, 'Edit Counter', 'counterEditor', bindAction(fragmentId, setCount), bindAction(fragmentId, noAction), { count: intToString(count) })
+  return createAction(openPanel, 'Edit Counter', 'counterEditor', bindAction(fragmentId, setCount), bindAction(fragmentId, noAction), intToString(count))
 })
 
 export const reducer = (count = 9, action, { onChange, color, fragmentId, componentClassRegistry }) => {
@@ -54,7 +54,8 @@ export const reducer = (count = 9, action, { onChange, color, fragmentId, compon
       return effect(count, batch(command(incAsync)(count), dispatchAction(createAction(onChange, color))))
   
     case SET_COUNT:
-      return action.count
+      console.log(stringToInt(action.count), typeof stringToInt(action.count))
+      return stringToInt(action.count)
 
     case OPEN_EDIT_PANEL:
       return effect(count, openEditPanelCommand(fragmentId, componentClassRegistry, count))
