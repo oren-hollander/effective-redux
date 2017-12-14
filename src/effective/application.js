@@ -41,7 +41,7 @@ export const application = (rootElementId, View, reducer, subscriptions = noop) 
 
   const renderApp = () => render (
     <Provider store={store} fragmentStore={applicationFragmentStore} fragmentId={applicationFragmentId} componentClassRegistry={registry} fragmentReducers={fragmentReducers}
-              renderScheduler={scheduler} dispatch={store.dispatch} getState={store.getState}> 
+              renderScheduler={scheduler} > 
       <View fragmentId={applicationFragmentId}/>
     </Provider>, 
     rootElement
@@ -50,6 +50,6 @@ export const application = (rootElementId, View, reducer, subscriptions = noop) 
   window.addEventListener('beforeunload', () => unmountComponentAtNode(rootElement))
   
   subscriptions(applicationFragmentStore.dispatch)
-  store.subscribe(() => scheduler.scheduleOwn().then(renderApp))
+  applicationFragmentStore.subscribe(() => scheduler.scheduleOwn().then(renderApp))
   renderApp()
 }

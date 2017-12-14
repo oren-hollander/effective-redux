@@ -7,11 +7,11 @@ const OnlyChild = ({ children }) => Children.only(children)
 
 export const Provider = withContext({ 
   store: storePropType,
-  fragmentStore: storePropType,
-  fragmentId: string,
   componentClassRegistry: componentClassRegistryPropType,
   fragmentReducers: fragmentReducersPropType,
-  renderScheduler: renderSchedulerType
+  renderScheduler: renderSchedulerType,
+  fragmentStore: storePropType,
+  fragmentId: string
 }, ({ store, fragmentStore, fragmentId, componentClassRegistry, fragmentReducers, renderScheduler }) => ({ store, fragmentStore, fragmentId, componentClassRegistry, fragmentReducers, renderScheduler }))(
   OnlyChild
 )
