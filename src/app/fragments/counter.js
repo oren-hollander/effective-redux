@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '../../ui'
 import { fragment, mapStateToProps, dispatching, effect } from '../../effective'
 import { interval } from '../../effective/subscriptions'
-import { delay } from '../../util'
+import { delay, noAction } from '../../util'
 import { command, batch } from '../../effective/command'
 import { dispatchAction } from '../../effective/commands'
 import { createAction, defineAction } from '../../util/actionDefinition'
@@ -40,12 +40,14 @@ export const reducer = (count = 9, action, { onChange, color }) => {
   }
 }
 
+const createOpenPanelAction = (fragmentId) => createAction(openPanel, 'Edit Counter', 'edit panel class id', bindAction(fragmentId, setCount), bindAction(fragmentId, noAction))
+
 export const CounterView = dispatching(({fragmentId, count, color, dispatch}) => 
   <div>
     <span>{count}</span>
     <Button color={color} onClick={dec}>-</Button>
     <Button color={color} onClick={inc}>+</Button>
-    <Button onClick={createAction(openPanel, bindAction(fragmentId, setCount))}>Edit</Button>
+    <Button onClick={createOpenPanelAction(fragmentId)}>Edit</Button>
   </div> 
 )
 

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { string } from 'prop-types'
-import { noop } from 'lodash/fp'
+import { noop, isUndefined } from 'lodash/fp'
 import { mapValues } from 'lodash/fp'
 import { renderSchedulerType, storePropType, fragmentReducersPropType } from './propTypes'
 import { idGenerator, breaker } from '../util'
@@ -8,7 +8,9 @@ import { renderScheduler } from './hierarchicalRenderScheduler'
 import { bindAction } from '../util/bindAction'
 import { fragmentStore } from './fragmentStore'
 
-export const fragment = (View, reducer, subscriptions = noop) => class Comp extends PureComponent {
+const fragmentIdGenerator = idGenerator('fragment-')
+
+export const fragment = (View, reducer, subscriptions = noop, fragmentId) => class Comp extends PureComponent {
 
   static contextTypes = {
     store: storePropType,
@@ -24,10 +26,10 @@ export const fragment = (View, reducer, subscriptions = noop) => class Comp exte
     renderScheduler: renderSchedulerType
   }
 
-  static fragmentIdGenerator = idGenerator('fragment-')
   
   componentWillMount() {
-    this.fragmentId = Comp.fragmentIdGenerator()
+    const s = View
+    this.fragmentId = isUndefined(fragmentId) ? fragmentIdGenerator() : fragmentId
 
     this.fragmentStore = fragmentStore(this.fragmentId, this.context.store)
     this.context.fragmentReducers.install(this.fragmentId, reducer, this.fragmentStore.dispatch, () => this.bindActionProps(this.props))
