@@ -1,36 +1,58 @@
 import React from 'react'
 import { bindAction } from '../../util/bindAction'
-import { defineAction } from '../../util/actionDefinition'
+import { defineAction, createAction } from '../../util/actionDefinition'
 import { RegistryComponent } from '../../componentRegistry/registryComponent'
 import { Button } from '../../ui/button'
 import { fragment, mapStateToProps } from '../../effective'
-import { pick, identity, isUndefined, noop } from 'lodash/fp'
+import { identity, isNil, noop } from 'lodash/fp'
+import { effect } from '../../effective/effectiveStoreEnhancer'
+import { dispatchAction } from '../../effective/commands/dispatchAction'
 
 const panelsFragmentId = 'panels'
 
 const OPEN_PANEL = 'open-panel'
-export const openPanel = bindAction(panelsFragmentId, defineAction(OPEN_PANEL, 'title', 'contentClassId', 'onOk', 'onCancel'))
+export const openPanel = bindAction(panelsFragmentId, defineAction(OPEN_PANEL, 'title', 'contentClassId', 'onOk', 'onCancel', 'panelProps'))
 
-const reducer = (state = {}, action) => {
+const CLOSE_PANEL_CANCEL = 'close-panel-cancel'
+export const closePanelCancel = bindAction(panelsFragmentId, defineAction(CLOSE_PANEL_CANCEL))
+
+const CLOSE_PANEL_OK = 'close-panel-ok'
+export const closePanelOk = bindAction(panelsFragmentId, defineAction(CLOSE_PANEL_OK))
+
+const SET_PANEL_RESULT = 'set-panel-result'
+export const setPanelResult = bindAction(panelsFragmentId, defineAction(SET_PANEL_RESULT, 'result'))
+
+const panelState = (title = null, contentClassId = null, onOk = null, onCancel = null, result = null, panelProps = null) => ({ title, contentClassId, onOk, onCancel, result, panelProps })
+
+const reducer = (state = panelState(), action) => {
   switch(action.type){
     case OPEN_PANEL: 
-      return pick(['title', 'contentClassId', 'onOk', 'onCancel'], action)
+      return panelState(action.title, action.contentClassId, action.onOk, action.onCancel, null, action.panelProps)
+
+    case CLOSE_PANEL_CANCEL:
+      return effect(panelState(), dispatchAction(state.onCancel))
+
+    case CLOSE_PANEL_OK:
+    return effect(panelState(), dispatchAction(createAction(state.onOk, state.result)))
+
+    case SET_PANEL_RESULT:
+      return { ...state, result: action.result }
 
     default: 
       return state
   }
 }
 
-export const PanelView = ({ title, contentClassId, onOk, onCancel }) => {
-  if(isUndefined(contentClassId))
+export const PanelView = ({ title, contentClassId, onOk, onCancel, panelProps }) => {
+  if(isNil(contentClassId))
     return null
   
   return <div style={{border: '2px solid red'}}>
     <div>{title}</div>
-    <RegistryComponent componentClassId={contentClassId} />
+    <RegistryComponent componentClassId={contentClassId} setPanelResult={setPanelResult} { ...panelProps }/>
     <div>
-      <Button onClick={onOk}>OK</Button>
-      <Button onClick={onCancel}>Cancel</Button>
+      <Button onClick={closePanelOk}>OK</Button>
+      <Button onClick={closePanelCancel}>Cancel</Button>
     </div>
   </div>
 }

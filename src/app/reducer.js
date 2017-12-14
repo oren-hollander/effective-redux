@@ -1,20 +1,18 @@
-import { isUndefined, defaultTo } from 'lodash/fp'
-
+import { isUndefined } from 'lodash/fp'
+import { effect } from '../effective'
+import { setItemToLocalStorage, getItemFromLocalStorage } from '../effective/commands'
+import { noAction } from '../util'
+import { batch } from '../effective/command'
+import { stringToInt } from '../util/stringConversion'
 import { 
   INC, ASYNC_INC, SET_COUNT, delayedInc, SET_COLOR, LOAD, UNLOAD, INIT_STATE, INCREASE_TWICE, WAIT_IS_OVER, 
   initState, waitIsOver, waitASecond, firstIncrease, secondIncrease
 } from './actions'
 
-import { effect } from '../effective'
-import { setItemToLocalStorage, getItemFromLocalStorage } from '../effective/commands'
-import { noAction } from '../util'
-import { batch } from '../effective/command'
-
 const initialState = {
   count: 0,
   color: 'lightgrey'
 }
-const stringToInt = str => defaultTo(0, Number.parseInt(str, 10))
 
 export const reducer = (state = initialState, action) => {
   switch(action.type){

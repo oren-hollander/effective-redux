@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { string } from 'prop-types'
 import { noop, isUndefined } from 'lodash/fp'
 import { mapValues } from 'lodash/fp'
-import { renderSchedulerType, storePropType, fragmentReducersPropType } from './propTypes'
+import { renderSchedulerType, storePropType, fragmentReducersPropType, componentClassRegistryPropType } from './propTypes'
 import { idGenerator, breaker } from '../util'
 import { renderScheduler } from './hierarchicalRenderScheduler'
 import { bindAction } from '../util/bindAction'
@@ -17,7 +17,8 @@ export const fragment = (View, reducer, subscriptions = noop, fragmentId) => cla
     fragmentId: string,  
     fragmentStore: storePropType,
     fragmentReducers: fragmentReducersPropType,
-    renderScheduler: renderSchedulerType
+    renderScheduler: renderSchedulerType,
+    componentClassRegistry: componentClassRegistryPropType
   }
 
   static childContextTypes = {
@@ -26,13 +27,20 @@ export const fragment = (View, reducer, subscriptions = noop, fragmentId) => cla
     renderScheduler: renderSchedulerType
   }
 
-  
+  constructor(props){
+    super(props)
+    this.getViewProps = this.getViewProps.bind(this)
+  }
+
+  getViewProps() {
+    return { ...mapValues(bindAction(this.context.fragmentId), this.props), fragmentId: this.fragmentId, componentClassRegistry: this.context.componentClassRegistry }
+  }
+
   componentWillMount() {
-    const s = View
     this.fragmentId = isUndefined(fragmentId) ? fragmentIdGenerator() : fragmentId
 
     this.fragmentStore = fragmentStore(this.fragmentId, this.context.store)
-    this.context.fragmentReducers.install(this.fragmentId, reducer, this.fragmentStore.dispatch, () => this.bindActionProps(this.props))
+    this.context.fragmentReducers.install(this.fragmentId, reducer, this.fragmentStore.dispatch, this.getViewProps)
     subscriptions(this.fragmentStore.dispatch)
     
     this.renderScheduler = renderScheduler(this.context.renderScheduler.scheduleChild)
@@ -57,12 +65,8 @@ export const fragment = (View, reducer, subscriptions = noop, fragmentId) => cla
     }
   }
 
-  bindActionProps(props) {
-    return mapValues(bindAction(this.context.fragmentId), props)
-  }
-
   render(){
     this.update.off()
-    return <View { ...this.bindActionProps(this.props) } fragmentId={this.fragmentId}/>
+    return <View { ...this.getViewProps() } />
   }
 }

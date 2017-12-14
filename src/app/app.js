@@ -3,14 +3,13 @@ import { TextInput, Button } from '../ui'
 import { inc, asyncInc, setCount, setColor, increaseTwice } from './actions'
 import { Counter } from './fragments'
 import { Panel } from './fragments/panels'
+import { intToString } from '../util/stringConversion'
 
 const randomColor = () => {
   const colors = ['red', 'green', 'blue', 'orange']
   const i = Math.floor(Math.random() * colors.length)
   return colors[i]
 }
-
-const intToString = int => Number(int).toString()
 
 export const App = ({count, color, installComponentReducer, uninstallComponentReducer}) => {
   return <div>
