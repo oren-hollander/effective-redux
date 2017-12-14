@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { string, object } from 'prop-types'
+import { string } from 'prop-types'
 import { componentClassRegistryPropType } from '../effective/propTypes'
 import { isUndefined, constant, omit } from 'lodash/fp'
 
 export class RegistryComponent extends Component {
-  static propTypes = { componentClassId: string }
+  static propTypes = { componentClassId: string.isRequired }
 
   static contextTypes = {
     componentClassRegistry: componentClassRegistryPropType
