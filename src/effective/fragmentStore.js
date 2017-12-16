@@ -1,4 +1,4 @@
-import { forEach, concat, without, toPairs, fromPairs, map, flow, get, compose } from 'lodash/fp'
+import { forEach, concat, without, toPairs, fromPairs, map, flow, get } from 'lodash/fp'
 import { invoke } from '../util/invoke'
 import { bindAction } from '../util/bindAction'
 import { mapPromise } from '../util'

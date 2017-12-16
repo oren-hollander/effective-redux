@@ -1,9 +1,8 @@
 import React from 'react'
-import { isUndefined } from 'lodash/fp' 
 import { compose } from 'recompose'
 import { Button, TextInput } from '../../ui'
 import { fragment, mapStateToProps, effect } from '../../effective'
-import { interval } from '../../effective/subscriptions'
+import { interval, combineSubscriptions } from '../../effective/subscriptions'
 import { delay, noAction } from '../../util'
 import { command, commandWithServices, batch } from '../../effective/command'
 import { dispatchAction } from '../../effective/commands'
@@ -24,6 +23,9 @@ const setCount = defineAction(SET_COUNT, 'count')
 const OPEN_EDIT_PANEL = 'open-edit-panel'
 const openEditPanel = defineAction(OPEN_EDIT_PANEL)
 
+const REGISTER_PANEL = 'register-panel'
+const registerPanel = defineAction(REGISTER_PANEL)
+
 const incAsync = async count => {
   await delay(1000)
   return createAction(setCount, count + 1)
@@ -40,16 +42,18 @@ const counterEditorReducer = (state = null, action) => state
 const CounterEditor = fragment(counterEditorReducer)(CounterEditorView)
 
 const openEditPanelCommand = commandWithServices(async ({ componentClassRegistry }, fragmentId, count) => {
-  if(isUndefined(componentClassRegistry.getComponentClass(fragmentId)))
-    componentClassRegistry.registerComponentClass('counterEditor', CounterEditor)
-  return createAction(openPanel, 'Edit Counter', 'counterEditor', 
+  return createAction(openPanel, 'Edit Counter', `counterEditor-${fragmentId}`, 
     bindAction(fragmentId, setCount), 
     bindAction(fragmentId, noAction), 
     intToString(count))
 })
 
-export const reducer = (count = 9, action, { onChange, color, fragmentId }) => {
+const registerPanelCommand = commandWithServices(async ({ componentClassRegistry }, fragmentId) => {
+  componentClassRegistry.registerComponentClass(`counterEditor-${fragmentId}`, CounterEditor)
+  return noAction
+})
 
+export const reducer = (count = 9, action, { onChange, color, fragmentId }) => {
   switch(action.type){
     case DEC: 
       return effect(count - 1, dispatchAction(createAction(onChange, color)))
@@ -59,6 +63,9 @@ export const reducer = (count = 9, action, { onChange, color, fragmentId }) => {
   
     case SET_COUNT:
       return stringToInt(action.count)
+
+    case REGISTER_PANEL: 
+      return effect(count, registerPanelCommand(fragmentId))
 
     case OPEN_EDIT_PANEL:
       return effect(count, openEditPanelCommand(fragmentId, count))
@@ -77,7 +84,12 @@ export const CounterView = ({count, color}) => {
   </div> 
 }
 
-const subscriptions = interval(100000, inc)
+const subscriptions = combineSubscriptions(
+  interval(100000, inc),
+  dispatch => {
+    dispatch(registerPanel)
+  }
+) 
 
 export const Counter = compose(
   fragment(reducer, subscriptions),

@@ -25,7 +25,8 @@ export const setPanelResult = bindAction(panelsFragmentId, defineAction(SET_PANE
 
 const panelState = (title = null, contentClassId = null, onOk = null, onCancel = null, value = null) => ({ title, contentClassId, onOk, onCancel, value })
 
-const reducer = (state = panelState(), action) => {
+const reducer = (state, action) => {
+  state = state || panelState()
   switch(action.type){
     case OPEN_PANEL: 
       return panelState(action.title, action.contentClassId, action.onOk, action.onCancel, action.value)
