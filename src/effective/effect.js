@@ -1,4 +1,4 @@
-import { curry,  reduce, toPairs } from 'lodash/fp'
+import { curry,  reduce, toPairs, get } from 'lodash/fp'
 import { flip, lift, liftArray } from '../util'
 
 const Effect = Symbol('Effect')
@@ -11,7 +11,7 @@ const makeEffect = curry((state, commands) => ({
 
 const noEffect = makeEffect({}, [])
 
-const isEffect = value => value[Effect]
+const isEffect = value => get(Effect, value)
 
 export const liftEffect = lift(isEffect, flip(makeEffect)([]))
 

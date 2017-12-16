@@ -35,7 +35,8 @@ const CounterEditorView = ({ value }) =>
     <div><TextInput value={value} onChange={setPanelResult}/></div>
   </div>
 
-const counterEditorReducer = (state, action) => state
+const counterEditorReducer = (state = null, action) => state
+
 const CounterEditor = fragment(counterEditorReducer)(CounterEditorView)
 
 const openEditPanelCommand = commandWithServices(async ({ componentClassRegistry }, fragmentId, count) => {
