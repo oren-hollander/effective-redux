@@ -10,7 +10,7 @@ import { fragmentStore, combineFragmentReducers } from './fragmentStore'
 
 export const applicationFragmentId = 'application-fragment' // todo: enable user to pass app fragment id
 
-export const application = (rootElementId, View, reducer, subscriptions = noop) => {
+export const application = (rootElementId, View, reducer, subscriptions = noop, services = {}) => {
 
   const store = createStore(constant({}))
 
@@ -40,8 +40,14 @@ export const application = (rootElementId, View, reducer, subscriptions = noop) 
   const registry = componentClassRegistry()
 
   const renderApp = () => render (
-    <Provider store={store} fragmentStore={applicationFragmentStore} fragmentId={applicationFragmentId} componentClassRegistry={registry} fragmentReducers={fragmentReducers}
-              renderScheduler={scheduler} > 
+    <Provider store={store} 
+              fragmentStore={applicationFragmentStore}
+              fragmentId={applicationFragmentId} 
+              componentClassRegistry={registry} 
+              fragmentReducers={fragmentReducers}
+              renderScheduler={scheduler} 
+              services={services}
+    > 
       <View fragmentId={applicationFragmentId}/>
     </Provider>, 
     rootElement

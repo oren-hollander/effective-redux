@@ -1,5 +1,6 @@
 import { createStore } from 'redux'
-import { fragmentStore, combineFragmentReducers, replaceFragmentReducers } from './fragmentStore'
+import { noop } from 'lodash/fp'
+import { fragmentStore, combineFragmentReducers } from './fragmentStore'
 
 describe('fragment store', () => {
   const fragment1Reducer = (state = {name: 'fragment 1'}) => state
@@ -9,8 +10,8 @@ describe('fragment store', () => {
   const action2 = {type: 'action', fragmentId: 'fragment2'}
 
   const reducer = combineFragmentReducers({ 
-    fragment1: fragment1Reducer,
-    fragment2: fragment2Reducer     
+    fragment1: {reducer: fragment1Reducer, getProps: noop, dispatch: noop},
+    fragment2: {reducer: fragment2Reducer, getProps: noop, dispatch: noop}
   })
   
   let store
@@ -51,15 +52,5 @@ describe('fragment store', () => {
     fragment2Store.dispatch(action1)
     expect(fragment1Callback).toHaveBeenCalledTimes(1)
     expect(fragment2Callback).not.toHaveBeenCalled()
-  })
-  
-  test('replace fragment reducers', () => {
-    const fragment3Reducer = (state = {name: 'fragment 3'}) => state
-    const fragment3Store = fragmentStore('fragment3', store)
-    replaceFragmentReducers({ fragment1: fragment1Reducer, fragment2: fragment2Reducer, fragment3: fragment3Reducer }, store)
-
-    expect(fragment1Store.getState()).toEqual({name: 'fragment 1'})
-    expect(fragment2Store.getState()).toEqual({name: 'fragment 2'})
-    expect(fragment3Store.getState()).toEqual({name: 'fragment 3'})
   })
 })

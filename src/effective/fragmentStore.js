@@ -42,10 +42,7 @@ export const combineFragmentReducers = reducers => (state, action) => {
   if(action.type === '@@redux/INIT') {
     newState = flow(
       toPairs,
-      map(([fragmentId, x]) => { 
-        const { reducer, getProps } = x
-        return [fragmentId, reducer(get(fragmentId, state), action, getProps())] // todo: handle effects...
-      }),
+      map(([fragmentId, { reducer, getProps }]) => [fragmentId, reducer(get(fragmentId, state), action, getProps())]), // todo: handle effects...
       fromPairs
     )(reducers) 
   }
