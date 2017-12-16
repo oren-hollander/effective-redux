@@ -29,19 +29,18 @@ const incAsync = async count => {
   return createAction(setCount, count + 1)
 }
 
-const counterEditorReducer = (state, action) => state
-
 const CounterEditorView = ({ value }) => 
   <div>
     <div>Counter Editor</div>
     <div><TextInput value={value} onChange={setPanelResult}/></div>
   </div>
 
+const counterEditorReducer = (state, action) => state
 const CounterEditor = fragment(counterEditorReducer)(CounterEditorView)
 
 const openEditPanelCommand = command(async (fragmentId, componentClassRegistry, count) => {
   if(isUndefined(componentClassRegistry.getComponentClass(fragmentId)))
-    componentClassRegistry.registerComponentClass('counterEditor', CounterEditorView)
+    componentClassRegistry.registerComponentClass('counterEditor', CounterEditor)
   return createAction(openPanel, 'Edit Counter', 'counterEditor', bindAction(fragmentId, setCount), bindAction(fragmentId, noAction), intToString(count))
 })
 

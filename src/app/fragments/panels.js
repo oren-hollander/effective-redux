@@ -6,7 +6,7 @@ import { RegistryComponent } from '../../componentRegistry/registryComponent'
 import { Button } from '../../ui/button'
 import { fragment, mapStateToProps } from '../../effective'
 import { identity, isNil, noop } from 'lodash/fp'
-import { effect } from '../../effective/effectiveStoreEnhancer'
+import { effect } from '../../effective/effect'
 import { dispatchAction } from '../../effective/commands/dispatchAction'
 
 const panelsFragmentId = 'panels'

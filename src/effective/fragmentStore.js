@@ -3,7 +3,7 @@ import { invoke } from '../util/invoke'
 import { bindAction } from '../util/bindAction'
 import { mapPromise } from '../util'
 import { execute } from './command'
-import { liftEffect } from './effectiveStoreEnhancer'
+import { liftEffect } from './effect'
 
 export const fragmentStore = (fragmentId, store) => {
   let subscribers = []

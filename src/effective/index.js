@@ -1,4 +1,4 @@
-export * from './effectiveStoreEnhancer'
+export * from './effect'
 export * from './dispatching'
 export * from './mapStateToProps'
 export * from './fragment'
