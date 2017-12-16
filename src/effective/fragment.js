@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react'
-import { string, object } from 'prop-types'
+import { string } from 'prop-types'
 import { noop, isUndefined } from 'lodash/fp'
 import { mapValues } from 'lodash/fp'
-import { renderSchedulerType, storePropType, fragmentReducersPropType, componentClassRegistryPropType } from './propTypes'
+import { renderSchedulerType, storePropType, fragmentReducersPropType } from './propTypes'
 import { idGenerator, breaker } from '../util'
 import { renderScheduler } from './hierarchicalRenderScheduler'
 import { bindAction } from '../util/bindAction'
@@ -17,9 +17,7 @@ export const fragment = (reducer, subscriptions = noop, fragmentId) => View => c
     fragmentId: string,  
     fragmentStore: storePropType,
     fragmentReducers: fragmentReducersPropType,
-    renderScheduler: renderSchedulerType,
-    componentClassRegistry: componentClassRegistryPropType,
-    services: object
+    renderScheduler: renderSchedulerType
   }
 
   static childContextTypes = {
@@ -36,8 +34,7 @@ export const fragment = (reducer, subscriptions = noop, fragmentId) => View => c
   getViewProps() {
     return { 
       ...mapValues(bindAction(this.context.fragmentId), this.props), 
-      fragmentId: this.fragmentId,
-      componentClassRegistry: this.context.componentClassRegistry
+      fragmentId: this.fragmentId
     }
   }
 

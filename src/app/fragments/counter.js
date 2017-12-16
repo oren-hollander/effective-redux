@@ -5,7 +5,7 @@ import { Button, TextInput } from '../../ui'
 import { fragment, mapStateToProps, effect } from '../../effective'
 import { interval } from '../../effective/subscriptions'
 import { delay, noAction } from '../../util'
-import { command, batch } from '../../effective/command'
+import { command, commandWithServices, batch } from '../../effective/command'
 import { dispatchAction } from '../../effective/commands'
 import { createAction, defineAction } from '../../util/actionDefinition'
 import { openPanel, setPanelResult } from './panels'
@@ -38,13 +38,16 @@ const CounterEditorView = ({ value }) =>
 const counterEditorReducer = (state, action) => state
 const CounterEditor = fragment(counterEditorReducer)(CounterEditorView)
 
-const openEditPanelCommand = command(async (fragmentId, componentClassRegistry, count) => {
+const openEditPanelCommand = commandWithServices(async ({ componentClassRegistry }, fragmentId, count) => {
   if(isUndefined(componentClassRegistry.getComponentClass(fragmentId)))
     componentClassRegistry.registerComponentClass('counterEditor', CounterEditor)
-  return createAction(openPanel, 'Edit Counter', 'counterEditor', bindAction(fragmentId, setCount), bindAction(fragmentId, noAction), intToString(count))
+  return createAction(openPanel, 'Edit Counter', 'counterEditor', 
+    bindAction(fragmentId, setCount), 
+    bindAction(fragmentId, noAction), 
+    intToString(count))
 })
 
-export const reducer = (count = 9, action, { onChange, color, fragmentId, componentClassRegistry }) => {
+export const reducer = (count = 9, action, { onChange, color, fragmentId }) => {
 
   switch(action.type){
     case DEC: 
@@ -57,7 +60,7 @@ export const reducer = (count = 9, action, { onChange, color, fragmentId, compon
       return stringToInt(action.count)
 
     case OPEN_EDIT_PANEL:
-      return effect(count, openEditPanelCommand(fragmentId, componentClassRegistry, count))
+      return effect(count, openEditPanelCommand(fragmentId, count))
 
     default: 
       return count

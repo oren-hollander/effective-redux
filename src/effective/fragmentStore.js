@@ -36,20 +36,20 @@ export const fragmentStore = (fragmentId, store) => {
   }
 }
 
-export const combineFragmentReducers = reducers => (state, action) => {
+export const combineFragmentReducers = (reducers, services) => (state, action) => {
 
   let newState
   if(action.type === '@@redux/INIT') {
     newState = flow(
       toPairs,
-      map(([fragmentId, { reducer, getProps }]) => [fragmentId, reducer(get(fragmentId, state), action, getProps())]), // todo: handle effects...
+      map(([fragmentId, { reducer, getProps }]) => [fragmentId, reducer(get(fragmentId, state), action, getProps())]), // todo: handle services and effects...
       fromPairs
     )(reducers) 
   }
   else {
     const reducerResult = reducers[action.fragmentId].reducer(state[action.fragmentId], action, reducers[action.fragmentId].getProps()) 
     const effect = liftEffect(reducerResult)
-    forEach(compose(mapPromise(reducers[action.fragmentId].dispatch), execute), effect.commands)
+    forEach(compose(mapPromise(reducers[action.fragmentId].dispatch), execute(services)), effect.commands)
   
     newState = { 
       ...state, 

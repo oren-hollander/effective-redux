@@ -15,6 +15,6 @@ describe('reducer', () => {
 
     const myAction = { type: 'my action' }
     const cmd = waitASecondImpl(delay)(myAction)
-    execute(cmd).then(action => expect(action).toEqual(myAction))
+    execute({})(cmd).then(action => expect(action).toEqual(myAction))
   })
 })

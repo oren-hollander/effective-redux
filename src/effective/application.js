@@ -5,12 +5,14 @@ import { Provider } from './provider'
 import { noop, set, unset, constant } from 'lodash/fp'
 import { renderScheduler } from './hierarchicalRenderScheduler'
 import { requestAnimationFrame } from '../util'
-import { componentClassRegistry } from '../componentRegistry/componentClassRegistry'
 import { fragmentStore, combineFragmentReducers } from './fragmentStore'
+import { componentClassRegistry } from '../componentRegistry/componentClassRegistry'
 
 export const applicationFragmentId = 'application-fragment' // todo: enable user to pass app fragment id
 
 export const application = (rootElementId, View, reducer, subscriptions = noop, services = {}) => {
+
+  services = { ...services, componentClassRegistry: componentClassRegistry() }
 
   const store = createStore(constant({}))
 
@@ -20,11 +22,11 @@ export const application = (rootElementId, View, reducer, subscriptions = noop, 
     return {
       install: (fragmentId, reducer, dispatch, getProps) => {
         reducers = set(fragmentId, { reducer, getProps, dispatch }, reducers)
-        store.replaceReducer(combineFragmentReducers(reducers))
+        store.replaceReducer(combineFragmentReducers(reducers, services))
       },
       uninstall: fragmentId => {
         reducers = unset(fragmentId, reducers)
-        store.replaceReducer(combineFragmentReducers(reducers), store.dispatch)
+        store.replaceReducer(combineFragmentReducers(reducers, services), store.dispatch)
       }
     }
   }
@@ -37,16 +39,14 @@ export const application = (rootElementId, View, reducer, subscriptions = noop, 
 
   const rootElement = document.getElementById(rootElementId)
   const scheduler = renderScheduler(requestAnimationFrame)
-  const registry = componentClassRegistry()
 
   const renderApp = () => render (
     <Provider store={store} 
+              componentClassRegistry={services.componentClassRegistry}
               fragmentStore={applicationFragmentStore}
               fragmentId={applicationFragmentId} 
-              componentClassRegistry={registry} 
               fragmentReducers={fragmentReducers}
               renderScheduler={scheduler} 
-              services={services}
     > 
       <View fragmentId={applicationFragmentId}/>
     </Provider>, 
