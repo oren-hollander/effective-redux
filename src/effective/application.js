@@ -8,7 +8,7 @@ import { requestAnimationFrame } from '../util'
 import { componentClassRegistry } from '../componentRegistry/componentClassRegistry'
 import { fragmentStore, combineFragmentReducers } from './fragmentStore'
 
-export const applicationFragmentId = 'application-fragment'
+export const applicationFragmentId = 'application-fragment' // todo: enable user to pass app fragment id
 
 export const application = (rootElementId, View, reducer, subscriptions = noop) => {
 
