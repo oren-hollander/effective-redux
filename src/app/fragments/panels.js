@@ -1,4 +1,5 @@
 import React from 'react'
+import { compose } from 'recompose'
 import { bindAction } from '../../util/bindAction'
 import { defineAction, createAction } from '../../util/actionDefinition'
 import { RegistryComponent } from '../../componentRegistry/registryComponent'
@@ -57,5 +58,7 @@ export const PanelView = ({ title, contentClassId, onOk, onCancel, value }) => {
   </div>
 }
 
-export const PanelViewWithProps = mapStateToProps(identity)(PanelView)
-export const Panel = fragment(PanelViewWithProps, reducer, noop, panelsFragmentId)
+export const Panel = compose(
+  fragment(reducer, noop, panelsFragmentId),
+  mapStateToProps(identity)
+)(PanelView)

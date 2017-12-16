@@ -10,7 +10,7 @@ import { fragmentStore } from './fragmentStore'
 
 const fragmentIdGenerator = idGenerator('fragment-')
 
-export const fragment = (View, reducer, subscriptions = noop, fragmentId) => class Comp extends PureComponent {
+export const fragment = (reducer, subscriptions = noop, fragmentId) => View => class Comp extends PureComponent {
 
   static contextTypes = {
     store: storePropType,

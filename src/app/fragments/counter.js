@@ -1,5 +1,6 @@
 import React from 'react'
 import { isUndefined } from 'lodash/fp' 
+import { compose } from 'recompose'
 import { Button, TextInput } from '../../ui'
 import { fragment, mapStateToProps, effect } from '../../effective'
 import { interval } from '../../effective/subscriptions'
@@ -36,11 +37,11 @@ const CounterEditorView = ({ value }) =>
     <div><TextInput value={value} onChange={setPanelResult}/></div>
   </div>
 
-const CounterEditor = fragment(CounterEditorView, counterEditorReducer)
+const CounterEditor = fragment(counterEditorReducer)(CounterEditorView)
 
 const openEditPanelCommand = command(async (fragmentId, componentClassRegistry, count) => {
   if(isUndefined(componentClassRegistry.getComponentClass(fragmentId)))
-    componentClassRegistry.registerComponentClass('counterEditor', CounterEditor)
+    componentClassRegistry.registerComponentClass('counterEditor', CounterEditorView)
   return createAction(openPanel, 'Edit Counter', 'counterEditor', bindAction(fragmentId, setCount), bindAction(fragmentId, noAction), intToString(count))
 })
 
@@ -54,7 +55,6 @@ export const reducer = (count = 9, action, { onChange, color, fragmentId, compon
       return effect(count, batch(command(incAsync)(count), dispatchAction(createAction(onChange, color))))
   
     case SET_COUNT:
-      console.log(stringToInt(action.count), typeof stringToInt(action.count))
       return stringToInt(action.count)
 
     case OPEN_EDIT_PANEL:
@@ -74,8 +74,9 @@ export const CounterView = ({count, color}) => {
   </div> 
 }
 
-export const CounterViewWithProps = mapStateToProps(state => ({ count: state }))(CounterView)
-
 const subscriptions = interval(100000, inc)
 
-export const Counter = fragment(CounterViewWithProps, reducer, subscriptions)
+export const Counter = compose(
+  fragment(reducer, subscriptions),
+  mapStateToProps(state => ({ count: state }))
+)(CounterView)
