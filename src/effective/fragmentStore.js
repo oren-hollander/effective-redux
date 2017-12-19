@@ -1,4 +1,4 @@
-import { forEach, concat, without, toPairs, fromPairs, map, flow, get } from 'lodash/fp'
+import { forEach, concat, without, toPairs, fromPairs, map, flow, get, isUndefined } from 'lodash/fp'
 import { invoke } from '../util/invoke'
 import { bindAction } from '../util/bindAction'
 import { mapPromise } from '../util'
@@ -38,7 +38,11 @@ export const fragmentStore = (fragmentId, store) => {
 
 export const combineFragmentReducers = (reducers, services) => (state, action) => {
 
-  const dispatch = get([action.fragmentId, 'dispatch'], reducers)
+  const dispatchFragment = get([action.fragmentId, 'dispatch'], reducers)
+  const dispatch = action => {
+    if(action.type !== '')
+      dispatchFragment(action)
+  }
 
   const executeCommands = forEach(
     flow(
@@ -49,11 +53,13 @@ export const combineFragmentReducers = (reducers, services) => (state, action) =
   
   let newState
 
-  if(action.type === '@@redux/INIT') {
+  if(action.type === '@@redux/INIT' || action.type === '@@INIT') {
     newState = flow(
       toPairs,
       map(([fragmentId, { reducer, getProps }]) => { 
-        const effect = liftEffect(reducer(get(fragmentId, state), action, getProps()))
+        const fragmentState = get(fragmentId, state)
+        const reduced = reducer(fragmentState, action, getProps())
+        const effect = liftEffect(reduced)
         executeCommands(effect.commands)
 
         return [fragmentId, effect.state]
@@ -62,17 +68,25 @@ export const combineFragmentReducers = (reducers, services) => (state, action) =
     )(reducers) 
   }
   else {
-    const effect = liftEffect(
-      reducers[action.fragmentId].reducer(get(action.fragmentId, state), action, reducers[action.fragmentId].getProps())
-    )
-
-    executeCommands(effect.commands)
+    const fragmentState = get(action.fragmentId, state)
+    if(isUndefined(fragmentState)){
+      newState = state
+    }
+    else {
+      const effect = liftEffect(
+        reducers[action.fragmentId].reducer(get(action.fragmentId, state), action, reducers[action.fragmentId].getProps())
+      )
   
-    newState = { 
-      ...state, 
-      [action.fragmentId]: effect.state
+      executeCommands(effect.commands)
+    
+      newState = { 
+        ...state, 
+        [action.fragmentId]: effect.state
+      }
     }
   }
+
+  // console.log('state after', newState)
 
   return { ...newState, lastActionFragmentId: action.fragmentId }
 }

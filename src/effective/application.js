@@ -19,35 +19,32 @@ export const application = (rootElementId, View, reducer, subscriptions = noop, 
 
   services = { ...services, componentClassRegistry: componentClassRegistry() }
 
-  const preloadedState = storage.load(applicationFragmentId)
-  const store = createStore(identity, preloadedState)
-  window.addEventListener('beforeunload', () => {
-    storage.save(applicationFragmentId, store.getState())
-  })
-
   const FragmentReducers = () => {
-    let reducers = {}
-
-    const storeReducers = () => ({ 
-      ...mapValues(constant({ reducer: identity, getProps: constant({}), dispatch: noop }), store.getState()), 
-      ...reducers 
-    })
+    
+    
+    const voidReducer = { reducer: identity, getProps: constant({}), dispatch: noop }
+    const preloadedState = storage.load(applicationFragmentId)
+    let reducers = mapValues(() => voidReducer, preloadedState)
+    const store = createStore(identity, preloadedState)//, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
     
     return {
+      store,
       install: (fragmentId, reducer, dispatch, getProps) => {
         reducers = set(fragmentId, { reducer, getProps, dispatch }, reducers)
-        store.replaceReducer(combineFragmentReducers(storeReducers(), services))
+        store.replaceReducer(combineFragmentReducers(reducers, services))
       },
-      uninstall: fragmentId => {
-        reducers = unset(fragmentId, reducers)
-        store.replaceReducer(combineFragmentReducers(storeReducers(), services), store.dispatch)
+      uninstall: (fragmentId, persist = false) => {
+        reducers = persist 
+          ? set(fragmentId, voidReducer, reducers)
+          : unset(fragmentId, reducers)
+        store.replaceReducer(combineFragmentReducers(reducers, services), store.dispatch)
       }
     }
   }
 
   const fragmentReducers = FragmentReducers()
 
-  const applicationFragmentStore = fragmentStore(applicationFragmentId, store)
+  const applicationFragmentStore = fragmentStore(applicationFragmentId, fragmentReducers.store)
   
   fragmentReducers.install(applicationFragmentId, reducer, applicationFragmentStore.dispatch, constant({}))
 
@@ -55,20 +52,22 @@ export const application = (rootElementId, View, reducer, subscriptions = noop, 
   const scheduler = renderScheduler(requestAnimationFrame)
 
   const renderApp = () => render (
-    <Provider store={store} 
+    <Provider store={fragmentReducers.store} 
               componentClassRegistry={services.componentClassRegistry}
               fragmentStore={applicationFragmentStore}
               fragmentId={applicationFragmentId} 
               fragmentReducers={fragmentReducers}
-              renderScheduler={scheduler} 
-    > 
+              renderScheduler={scheduler}> 
       <View fragmentId={applicationFragmentId}/>
     </Provider>, 
     rootElement
   )
-  
-  window.addEventListener('beforeunload', () => unmountComponentAtNode(rootElement))
-  
+
+  window.addEventListener('beforeunload', () => {
+    unmountComponentAtNode(rootElement)
+    storage.save(applicationFragmentId, fragmentReducers.store.getState())
+  })
+
   subscriptions(applicationFragmentStore.dispatch)
   applicationFragmentStore.subscribe(() => scheduler.scheduleOwn().then(renderApp))
   renderApp()

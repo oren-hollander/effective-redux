@@ -9,7 +9,7 @@ import { identity, isNil, noop } from 'lodash/fp'
 import { effect } from '../../effective/effect'
 import { dispatchAction } from '../../effective/commands/dispatchAction'
 
-const panelsFragmentId = 'panels'
+export const panelsFragmentId = 'panels'
 
 const OPEN_PANEL = 'open-panel'
 export const openPanel = bindAction(panelsFragmentId, defineAction(OPEN_PANEL, 'title', 'contentClassId', 'onOk', 'onCancel', 'value'))

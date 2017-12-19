@@ -41,6 +41,9 @@ const counterEditorReducer = (state = null, action) => state
 
 const CounterEditor = fragment(counterEditorReducer)(CounterEditorView)
 
+// const myCommand = command(async (paramA, paramB) => {})
+// const myCommandWithServices = withServices('serviceA', 'serviceB')(myCommand)
+
 const openEditPanelCommand = commandWithServices(async ({ componentClassRegistry }, fragmentId, count) => {
   return createAction(openPanel, 'Edit Counter', `counterEditor-${fragmentId}`, 
     bindAction(fragmentId, setCount), 

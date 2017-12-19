@@ -10,7 +10,7 @@ import { fragmentStore } from './fragmentStore'
 
 const fragmentIdGenerator = idGenerator('fragment-')
 
-export const fragment = (reducer, subscriptions = noop, fragmentId) => View => class Comp extends PureComponent {
+export const fragment = (reducer, subscriptions = noop) => View => class Comp extends PureComponent {
 
   static contextTypes = {
     store: storePropType,
@@ -39,7 +39,7 @@ export const fragment = (reducer, subscriptions = noop, fragmentId) => View => c
   }
 
   componentWillMount() {
-    this.fragmentId = isUndefined(fragmentId) ? fragmentIdGenerator() : fragmentId
+    this.fragmentId = isUndefined(this.props.fragmentId) ? fragmentIdGenerator() : this.props.fragmentId
 
     this.fragmentStore = fragmentStore(this.fragmentId, this.context.store)
     this.context.fragmentReducers.install(this.fragmentId, reducer, this.fragmentStore.dispatch, this.getViewProps)
@@ -55,7 +55,7 @@ export const fragment = (reducer, subscriptions = noop, fragmentId) => View => c
   }
 
   componentWillUnmount() {
-    this.context.fragmentReducers.uninstall(this.fragmentId)
+    this.context.fragmentReducers.uninstall(this.fragmentId, this.props.persistFragment)
     this.unsubscribe()
   }
 
