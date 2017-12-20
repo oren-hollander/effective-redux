@@ -30,6 +30,6 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
       </Fragment>    
     }
     <Button onClick={increaseTwice}>Increase Twice</Button>
-    <Panel fragmentId={panelsFragmentId}/>
+    <Panel fragmentId={panelsFragmentId} persistFragment={true}/>
   </div>
 }

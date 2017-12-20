@@ -1,9 +1,11 @@
-export const command = asyncFunction => (...args) => ({ asyncFunction, args, injectServices: false })
-export const commandWithServices = asyncFunction => (...args) => ({ asyncFunction, args, injectServices: true })
+import { map, get, isEmpty } from 'lodash/fp'
+import { flip } from '../util/flip'
 
-export const execute = services => ({ asyncFunction, args, injectServices }) => 
-  injectServices 
-    ? asyncFunction(services, ...args)
-    : asyncFunction(...args)
+export const command = (commandFunction, ...serviceNames) => (...args) => ({ commandFunction, serviceNames, args })
+
+export const execute = services => ({ commandFunction, serviceNames, args }) => 
+  isEmpty(serviceNames) 
+    ? commandFunction(...args)
+    : commandFunction(...map(flip(get)(services), serviceNames))(...args)
 
 export const batch = (...commands) => commands
