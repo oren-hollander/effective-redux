@@ -38,7 +38,7 @@ const incAsync = command(async count => {
 
 const CounterEditorView = ({ value }) => 
   <div>
-    <div>Counter Editor</div>
+    <div>Enter counter value:</div>
     <div><TextInput value={value} onChange={setPanelResult}/></div>
   </div>
 
@@ -80,12 +80,19 @@ export const reducer = (count = 9, action, { onChange, color, fragmentId }) => {
   }
 }
 
-export const CounterView = ({count, color, fragmentId}) => 
-  <div>
-    <span>{count}</span>
+export const CounterView = ({name, count, color, fragmentId}) => 
+  <div style={{border: `3px solid ${color}`, padding: '10px', margin: '10px'}}>
+    <div style={{marginBottom: '6px'}}>
+      {name}
+    </div>
+    <div>
     <Button color={color} onClick={dec}>-</Button>
+    <span style={{margin: '0 10px'}}>{count}</span>
     <Button color={color} onClick={inc}>+</Button>
-    <Button onClick={openEditPanel}>Edit</Button>
+    </div>
+    <div style={{marginTop: '6px'}}>
+      <Button color='gray' onClick={openEditPanel}>Edit</Button>
+    </div>
   </div> 
 
 const subscriptions = combineSubscriptions(

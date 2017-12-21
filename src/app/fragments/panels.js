@@ -50,12 +50,14 @@ export const PanelView = ({ title, contentClassId, onOk, onCancel, value }) => {
   if(isNil(contentClassId))
     return null
   
-  return <div style={{border: '2px solid red'}}>
-    <div>{title}</div>
-    <RegistryComponent componentClassId={contentClassId} setPanelResult={setPanelResult} value={value}/>
-    <div>
-      <Button onClick={closePanelOk}>OK</Button>
-      <Button onClick={closePanelCancel}>Cancel</Button>
+  return <div style={{border: '4px solid gray'}}>
+    <div style={{backgroundColor: 'gray', color: 'white', padding: '2px'}}>{title}</div>
+    <div style={{padding: '5px'}}>
+      <RegistryComponent componentClassId={contentClassId} setPanelResult={setPanelResult} value={value}/>
+      <div style={{marginTop: '10px'}}>
+        <Button color='green' onClick={closePanelOk}>OK</Button>
+        <Button color='red' onClick={closePanelCancel}>Cancel</Button>
+      </div>      
     </div>
   </div>
 }
