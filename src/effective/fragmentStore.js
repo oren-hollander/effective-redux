@@ -23,13 +23,12 @@ export const fragmentStore = (fragmentId, store) => {
     }
   })
 
-  const dispatch = action => {
-    const boundAction = bindAction(fragmentId, action)
-    return store.dispatch(boundAction)
-  }
+  const dispatch = flow(
+    bindAction(fragmentId),
+    store.dispatch
+  )
 
   return {
-    ...store,
     dispatch,
     subscribe,
     getState
