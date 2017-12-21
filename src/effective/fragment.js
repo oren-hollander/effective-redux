@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { string } from 'prop-types'
-import { noop, isUndefined } from 'lodash/fp'
+import { flow, noop, isUndefined, unset, set } from 'lodash/fp'
 import { mapValues } from 'lodash/fp'
 import { renderSchedulerType, storePropType, fragmentReducersPropType } from './propTypes'
 import { idGenerator, breaker } from '../util'
@@ -32,10 +32,11 @@ export const fragment = (reducer, subscriptions = noop) => View => class Comp ex
   }
 
   getViewProps() {
-    return { 
-      ...mapValues(bindAction(this.context.fragmentId), this.props), 
-      fragmentId: this.fragmentId
-    }
+    return flow(
+      mapValues(bindAction(this.context.fragmentId)),
+      set('fragmentId', this.fragmentId),
+      unset('persistFragment')
+    )(this.props)
   }
 
   componentWillMount() {

@@ -76,14 +76,13 @@ export const reducer = (count = 9, action, { onChange, color, fragmentId }) => {
   }
 }
 
-export const CounterView = ({count, color}) => {
-  return <div>
+export const CounterView = ({count, color, fragmentId}) => 
+  <div>
     <span>{count}</span>
     <Button color={color} onClick={dec}>-</Button>
     <Button color={color} onClick={inc}>+</Button>
     <Button onClick={openEditPanel}>Edit</Button>
   </div> 
-}
 
 const subscriptions = combineSubscriptions(
   interval(100000, inc),
