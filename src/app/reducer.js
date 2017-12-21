@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash/fp'
-import { effect } from '../effective'
-import { setItemToLocalStorage, getItemFromLocalStorage } from '../effective/commands'
-import { noAction } from '../util'
+import { effect } from '../effective/effect'
+import { setItemToLocalStorage, getItemFromLocalStorage } from '../effective/commands/localStorage'
+import { noAction } from '../util/noAction'
 import { batch } from '../effective/command'
 import { stringToInt } from '../util/stringConversion'
 import { 

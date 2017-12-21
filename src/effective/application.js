@@ -1,11 +1,11 @@
 import React from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import { createStore } from 'redux'
-import { Provider } from './provider'
 import { flow, noop, set, unset, constant, identity, map, mapValues, filter, fromPairs } from 'lodash/fp'
+import { requestAnimationFrame } from '../util/delay'
 import { renderScheduler } from './hierarchicalRenderScheduler'
-import { requestAnimationFrame } from '../util'
 import { fragmentStore, combineFragmentReducers } from './fragmentStore'
+import { Provider } from './provider'
 
 export const applicationFragmentId = 'application-fragment' // todo: enable user to pass app fragment id
 

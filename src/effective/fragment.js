@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react'
 import { string } from 'prop-types'
-import { flow, noop, isUndefined, unset, set } from 'lodash/fp'
-import { mapValues } from 'lodash/fp'
-import { renderSchedulerType, storePropType, fragmentReducersPropType } from './propTypes'
-import { idGenerator, breaker } from '../util'
-import { renderScheduler } from './hierarchicalRenderScheduler'
+import { mapValues, flow, noop, isUndefined, unset, set } from 'lodash/fp'
+import { idGenerator } from '../util/idGenerator'
+import { breaker } from '../util/breaker'
 import { bindAction } from '../util/bindAction'
 import { fragmentStore } from './fragmentStore'
+import { renderSchedulerType, storePropType, fragmentReducersPropType } from './propTypes'
+import { renderScheduler } from './hierarchicalRenderScheduler'
 
 const fragmentIdGenerator = idGenerator('fragment-')
 

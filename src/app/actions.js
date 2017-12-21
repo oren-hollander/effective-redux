@@ -1,5 +1,5 @@
 import { constant } from 'lodash/fp'
-import { delay } from '../util'
+import { delay } from '../util/delay'
 import { command } from '../effective/command'
 import { createAction, defineAction } from '../util/actionDefinition'
 

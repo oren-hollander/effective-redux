@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react'
-import { TextInput, Button } from '../ui'
+import { TextInput } from '../ui/textInput'
+import { Button } from '../ui/button'
 import { inc, asyncInc, setCount, setColor, increaseTwice } from './actions'
-import { Counter } from './fragments'
+import { Counter } from './fragments/counter'
 import { Panel, panelsFragmentId } from './fragments/panels'
 import { intToString } from '../util/stringConversion'
 

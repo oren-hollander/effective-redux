@@ -1,5 +1,6 @@
 import { curry,  reduce, toPairs, get } from 'lodash/fp'
-import { flip, lift, liftArray } from '../util'
+import { flip } from '../util/flip'
+import { lift, liftArray } from '../util/lift'
 
 const Effect = Symbol('Effect')
 

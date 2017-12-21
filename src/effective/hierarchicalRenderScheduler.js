@@ -1,6 +1,6 @@
 import { forEach, concat, noop } from 'lodash/fp'
 import { renderTree, renderNode, schedule, sort } from './renderTree'
-import { invoke } from '../util'
+import { invoke } from '../util/invoke'
 
 export const hierarchicalRenderScheduler = requestAnimationFrame => {
   let tree
