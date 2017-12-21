@@ -26,10 +26,10 @@ const openEditPanel = defineAction(OPEN_EDIT_PANEL)
 const REGISTER_PANEL = 'register-panel'
 const registerPanel = defineAction(REGISTER_PANEL)
 
-const incAsync = async count => {
+const incAsync = command(async count => {
   await delay(1000)
   return createAction(setCount, count + 1)
-}
+})
 
 const CounterEditorView = ({ value }) => 
   <div>
@@ -40,7 +40,6 @@ const CounterEditorView = ({ value }) =>
 const counterEditorReducer = (state = null, action) => state
 
 const CounterEditor = fragment(counterEditorReducer)(CounterEditorView)
-
 
 const openEditPanelCommand = command(componentClassRegistry => async (fragmentId, count) => {
   return createAction(openPanel, 'Edit Counter', `counterEditor-${fragmentId}`, 
@@ -60,7 +59,7 @@ export const reducer = (count = 9, action, { onChange, color, fragmentId }) => {
       return effect(count - 1, dispatchAction(createAction(onChange, color)))
     
     case INC: 
-      return effect(count, batch(command(incAsync)(count), dispatchAction(createAction(onChange, color))))
+      return effect(count, batch(incAsync(count), dispatchAction(createAction(onChange, color))))
   
     case SET_COUNT:
       return stringToInt(action.count)
