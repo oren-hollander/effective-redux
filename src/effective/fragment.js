@@ -5,7 +5,7 @@ import { idGenerator } from '../util/idGenerator'
 import { breaker } from '../util/breaker'
 import { bindAction } from '../util/bindAction'
 import { fragmentStore } from './fragmentStore'
-import { renderSchedulerType, storePropType, fragmentReducersPropType } from './propTypes'
+import { renderSchedulerType, fragmentStorePropType, storePropType, fragmentReducersPropType } from './propTypes'
 import { renderScheduler } from './hierarchicalRenderScheduler'
 
 const fragmentIdGenerator = idGenerator('fragment-')
@@ -15,14 +15,14 @@ export const fragment = (reducer, subscriptions = noop) => View => class Comp ex
   static contextTypes = {
     store: storePropType,
     fragmentId: string,  
-    fragmentStore: storePropType,
+    fragmentStore: fragmentStorePropType,
     fragmentReducers: fragmentReducersPropType,
     renderScheduler: renderSchedulerType
   }
 
   static childContextTypes = {
     fragmentId: string,  
-    fragmentStore: storePropType,  
+    fragmentStore: fragmentStorePropType,  
     renderScheduler: renderSchedulerType
   }
 

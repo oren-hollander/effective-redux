@@ -7,6 +7,12 @@ export const storePropType = shape({
   replaceReducer: func.isRequired
 })
 
+export const fragmentStorePropType = shape({
+  subscribe: func.isRequired,
+  dispatch: func.isRequired,
+  getState: func.isRequired
+})
+
 export const renderSchedulerType = shape({
   scheduleOwn: func.isRequired,
   scheduleChild: func.isRequired

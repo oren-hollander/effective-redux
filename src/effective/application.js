@@ -58,7 +58,6 @@ export const application = (rootElementId, View, reducer, subscriptions = noop, 
   const rootElement = document.getElementById(rootElementId)
   const scheduler = renderScheduler(requestAnimationFrame)
 
-  console.log(contextServices)
   const renderApp = () => render (
     <Provider store={fragmentReducers.store} 
               services={contextServices}
