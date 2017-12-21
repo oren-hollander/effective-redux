@@ -1,0 +1,1 @@
+export const service = (name, api, provideOnContext = false) => ({ name, api, provideOnContext })

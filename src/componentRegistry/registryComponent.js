@@ -1,13 +1,12 @@
-import React, { Component } from 'react'
-import { string } from 'prop-types'
-import { componentClassRegistryPropType } from '../effective/propTypes'
+import React, { PureComponent } from 'react'
+import { string, object } from 'prop-types'
 import { isUndefined, constant, omit } from 'lodash/fp'
 
-export class RegistryComponent extends Component {
+export class RegistryComponent extends PureComponent {
   static propTypes = { componentClassId: string.isRequired }
 
   static contextTypes = {
-    componentClassRegistry: componentClassRegistryPropType
+    services: object
   }
 
   constructor(props) {
@@ -18,9 +17,9 @@ export class RegistryComponent extends Component {
   }
 
   componentWillMount() {
-    const ComponentClass = this.context.componentClassRegistry.getComponentClass(this.props.componentClassId)
+    const ComponentClass = this.context.services.componentClassRegistry.getComponentClass(this.props.componentClassId)
     if(isUndefined(ComponentClass)){
-      this.context.componentClassRegistry.waitForComponentClass(this.props.componentClassId)
+      this.context.services.componentClassRegistry.waitForComponentClass(this.props.componentClassId)
         .then(ComponentClass => {
           this.setState({ ComponentClass })
           this.forceUpdate()

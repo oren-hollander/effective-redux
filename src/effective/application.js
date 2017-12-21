@@ -2,11 +2,10 @@ import React from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import { createStore } from 'redux'
 import { Provider } from './provider'
-import { noop, set, unset, constant, identity, mapValues } from 'lodash/fp'
+import { flow, noop, set, unset, constant, identity, map, mapValues, filter, fromPairs } from 'lodash/fp'
 import { renderScheduler } from './hierarchicalRenderScheduler'
 import { requestAnimationFrame } from '../util'
 import { fragmentStore, combineFragmentReducers } from './fragmentStore'
-import { componentClassRegistry } from '../componentRegistry/componentClassRegistry'
 
 export const applicationFragmentId = 'application-fragment' // todo: enable user to pass app fragment id
 
@@ -15,13 +14,21 @@ const noopStorage = {
   save: noop
 }
 
-export const application = (rootElementId, View, reducer, subscriptions = noop, services = {}, storage = noopStorage) => {
+export const application = (rootElementId, View, reducer, subscriptions = noop, serviceDefinitions = [], storage = noopStorage) => {
 
-  services = { ...services, componentClassRegistry: componentClassRegistry() }
+  const createServices = flow(
+    map(serviceDefinition => [serviceDefinition.name, serviceDefinition.api]),
+    fromPairs
+  )
+
+  const services = createServices(serviceDefinitions)
+
+  const contextServices = flow(
+    filter('provideOnContext'),
+    createServices
+  )(serviceDefinitions)
 
   const FragmentReducers = () => {
-    
-    
     const voidReducer = { reducer: identity, getProps: constant({}), dispatch: noop }
     const preloadedState = storage.load(applicationFragmentId)
     let reducers = mapValues(() => voidReducer, preloadedState)
@@ -51,9 +58,10 @@ export const application = (rootElementId, View, reducer, subscriptions = noop, 
   const rootElement = document.getElementById(rootElementId)
   const scheduler = renderScheduler(requestAnimationFrame)
 
+  console.log(contextServices)
   const renderApp = () => render (
     <Provider store={fragmentReducers.store} 
-              componentClassRegistry={services.componentClassRegistry}
+              services={contextServices}
               fragmentStore={applicationFragmentStore}
               fragmentId={applicationFragmentId} 
               fragmentReducers={fragmentReducers}
