@@ -85,7 +85,5 @@ export const combineFragmentReducers = (reducers, services) => (state, action) =
     }
   }
 
-  // console.log('state after', newState)
-
   return { ...newState, lastActionFragmentId: action.fragmentId }
 }
