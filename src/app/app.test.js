@@ -1,6 +1,6 @@
 import { reducer } from './reducer'
 import { increaseTwice, waitIsOver, waitASecond, firstIncrease, secondIncrease, waitASecondImpl } from './actions'
-import { effect } from '../effective'
+import { effect } from '../effective/effect'
 import { command, batch, execute } from '../effective/command'
 
 describe('reducer', () => {
