@@ -1,5 +1,15 @@
 import { forEach, has, flow, eq, set, get, unset, concat, partition } from 'lodash/fp'
 import { invoke } from '../util/invoke'
+import { shape, func } from 'prop-types'
+
+export const componentClassRegistryPropType = shape ({
+  componentClassRegistry: shape({
+    registerComponentClass: func,
+    unregisterComponentClass: func,
+    getComponentClass: func,
+    waitForComponentClass: func
+  })
+})
 
 export const componentClassRegistry = () => {
   let components = {}

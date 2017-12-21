@@ -1,19 +1,15 @@
 import React, { PureComponent } from 'react'
-import { string, shape, func } from 'prop-types'
+import { string } from 'prop-types'
 import { isUndefined, constant, omit } from 'lodash/fp'
+import { componentClassRegistryPropType } from './componentClassRegistry'
 
 export class RegistryComponent extends PureComponent {
-  static propTypes = { componentClassId: string.isRequired }
+  static propTypes = { 
+    componentClassId: string.isRequired 
+  }
 
   static contextTypes = {
-    services: shape ({
-      componentClassRegistry: shape({
-        registerComponentClass: func,
-        unregisterComponentClass: func,
-        getComponentClass: func,
-        waitForComponentClass: func
-      })
-    })
+    services: componentClassRegistryPropType
   }
 
   constructor(props) {
