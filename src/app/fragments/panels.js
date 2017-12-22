@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { compose } from 'recompose'
 import { bindAction } from '../../util/bindAction'
 import { defineAction, createAction } from '../../util/actionDefinition'
@@ -49,17 +49,22 @@ const reducer = (state, action) => {
 export const PanelView = ({ title, contentClassId, onOk, onCancel, value }) => {
   if(isNil(contentClassId))
     return null
-  
-  return <div style={{border: '4px solid gray'}}>
-    <div style={{backgroundColor: 'gray', color: 'white', padding: '2px'}}>{title}</div>
-    <div style={{padding: '5px'}}>
-      <RegistryComponent componentClassId={contentClassId} setPanelResult={setPanelResult} value={value}/>
-      <div style={{marginTop: '10px'}}>
-        <Button color='green' onClick={closePanelOk}>OK</Button>
-        <Button color='red' onClick={closePanelCancel}>Cancel</Button>
-      </div>      
-    </div>
-  </div>
+ 
+  return (
+    <Fragment>
+      <div style={{backgroundColor: 'lightgray', position: 'absolute', opacity: '0.5', margin: '0', padding: '0', left: '0', top: '0', height: '100%', width: '100%'}}/>
+      <div style={{border: '4px solid gray', position: 'absolute', width: '400px', height: '200px', left: '40%', top: '25%', backgroundColor: 'white'}}>
+        <div style={{backgroundColor: 'gray', color: 'white', padding: '2px'}}>{title}</div>
+        <div style={{padding: '5px'}}>
+          <RegistryComponent componentClassId={contentClassId} setPanelResult={setPanelResult} value={value}/>
+          <div style={{marginTop: '10px'}}>
+            <Button color='green' onClick={closePanelOk}>OK</Button>
+            <Button color='red' onClick={closePanelCancel}>Cancel</Button>
+          </div>      
+        </div>
+      </div>
+    </Fragment>
+  )
 }
 
 export const Panel = compose(
