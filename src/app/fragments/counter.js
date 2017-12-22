@@ -12,7 +12,8 @@ import { noAction } from '../../util/noAction'
 import { command, batch } from '../../effective/command'
 import { dispatchAction } from '../../effective/commands/dispatchAction'
 import { createAction, defineAction } from '../../util/actionDefinition'
-import { openPanel, setPanelResult } from './panels'
+import { openPanel } from './panels'
+import { openInspector, updateInspector } from './inspectors'
 import { bindAction } from '../../util/bindAction'
 import { intToString, stringToInt } from '../../util/stringConversion'
 
@@ -36,44 +37,56 @@ const incAsync = command(async count => {
   return createAction(setCount, count + 1)
 })
 
-const CounterEditorView = ({ value }) => 
+const CounterEditorView = ({ value, onUpdate }) => 
   <div>
     <div>Enter counter value:</div>
-    <div><TextInput value={value} onChange={setPanelResult}/></div>
+    <div><TextInput value={value} onChange={onUpdate}/></div>
   </div>
 
 const counterEditorReducer = (state = null, action) => state
 
 const CounterEditor = fragment(counterEditorReducer)(CounterEditorView)
 
-const openEditPanelCommand = command(componentClassRegistry => async (fragmentId, count) => {
-  return createAction(openPanel, 'Edit Counter', `counterEditor-${fragmentId}`, 
-    bindAction(fragmentId, setCount), 
-    bindAction(fragmentId, noAction), 
-    intToString(count))
-}, 'componentClassRegistry')
+const counterEditorComponentClassId = fragmentId => `counterEditor-${fragmentId}`
 
-const registerPanelCommand = command(componentClassRegistry => async fragmentId => {
-  componentClassRegistry.registerComponentClass(`counterEditor-${fragmentId}`, CounterEditor)
+const registerCounterEditorCommand = command(componentClassRegistry => async fragmentId => {
+  componentClassRegistry.registerComponentClass(counterEditorComponentClassId(fragmentId), CounterEditor)
   return noAction
 }, 'componentClassRegistry')
 
 export const reducer = (count = 9, action, { onChange, color, fragmentId }) => {
   switch(action.type){
     case DEC: 
-      return effect(count - 1, dispatchAction(createAction(onChange, color)))
+      return effect(count - 1, batch(
+        dispatchAction(createAction(onChange, color)), 
+        dispatchAction(createAction(updateInspector, counterEditorComponentClassId(fragmentId), intToString(count - 1)))
+      ))
     
     case INC: 
-      return effect(count, batch(incAsync(count), dispatchAction(createAction(onChange, color))))
+      return effect(count, batch(
+        incAsync(count), 
+        dispatchAction(createAction(onChange, color))
+      ))
   
     case SET_COUNT:
-      return stringToInt(action.count)
+      return effect(
+        stringToInt(action.count), 
+        dispatchAction(createAction(updateInspector, counterEditorComponentClassId(fragmentId), intToString(action.count)))
+      )
 
     case REGISTER_PANEL: 
-      return effect(count, registerPanelCommand(fragmentId))
+      return effect(count, registerCounterEditorCommand(fragmentId))
 
     case OPEN_EDIT_PANEL:
-      return effect(count, openEditPanelCommand(fragmentId, count))
+      return effect(count, dispatchAction(
+          createAction(openPanel, 
+            'Edit Counter', 
+            counterEditorComponentClassId(fragmentId),
+            bindAction(fragmentId, setCount), 
+            bindAction(fragmentId, noAction), 
+            intToString(count)
+          )
+        ))
 
     default: 
       return count
@@ -92,6 +105,7 @@ export const CounterView = ({name, count, color, fragmentId}) =>
     </div>
     <div style={{marginTop: '6px'}}>
       <Button color='gray' onClick={openEditPanel}>Edit</Button>
+      <Button color='gray' onClick={createAction(openInspector, counterEditorComponentClassId(fragmentId), name, intToString(count), bindAction(fragmentId, setCount))}>Inspect</Button>
     </div>
   </div> 
 

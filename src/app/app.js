@@ -4,6 +4,7 @@ import { Button } from '../ui/button'
 import { inc, asyncInc, setCount, setColor, increaseTwice } from './actions'
 import { Counter } from './fragments/counter'
 import { Panel, panelsFragmentId } from './fragments/panels'
+import { Inspectors, inspectorsFragmentId } from './fragments/inspectors'
 import { intToString } from '../util/stringConversion'
 
 const randomColor = () => {
@@ -42,6 +43,7 @@ export const App = ({count, color, installComponentReducer, uninstallComponentRe
           }
         </div>
         <div style={{gridColumn: '2'}}>
+          <Inspectors fragmentId={inspectorsFragmentId} persistFragment={true}/>
         </div>
       </div>
       <Panel fragmentId={panelsFragmentId} persistFragment={true}/>

@@ -56,7 +56,7 @@ export const PanelView = ({ title, contentClassId, onOk, onCancel, value }) => {
       <div style={{border: '4px solid gray', position: 'absolute', width: '400px', height: '200px', left: '40%', top: '25%', backgroundColor: 'white'}}>
         <div style={{backgroundColor: 'gray', color: 'white', padding: '2px'}}>{title}</div>
         <div style={{padding: '5px'}}>
-          <RegistryComponent componentClassId={contentClassId} setPanelResult={setPanelResult} value={value}/>
+          <RegistryComponent componentClassId={contentClassId} onUpdate={setPanelResult} value={value}/>
           <div style={{marginTop: '10px'}}>
             <Button color='green' onClick={closePanelOk}>OK</Button>
             <Button color='red' onClick={closePanelCancel}>Cancel</Button>
