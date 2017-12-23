@@ -75,7 +75,10 @@ export const reducer = (count = 9, action, { onChange, color, fragmentId }) => {
       )
 
     case REGISTER_PANEL: 
-      return effect(count, registerCounterEditorCommand(fragmentId))
+      return effect(
+        count, 
+        registerCounterEditorCommand(fragmentId)
+      )
 
     case OPEN_EDIT_PANEL:
       return effect(count, dispatchAction(
@@ -89,7 +92,10 @@ export const reducer = (count = 9, action, { onChange, color, fragmentId }) => {
         ))
 
     default: 
-      return count
+      return effect(
+        count,
+        dispatchAction(createAction(updateInspector, counterEditorComponentClassId(fragmentId), intToString(count)))        
+      )
   }
 }
 

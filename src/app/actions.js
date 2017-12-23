@@ -4,10 +4,10 @@ import { command } from '../effective/command'
 import { createAction, defineAction } from '../util/actionDefinition'
 
 export const INC = 'inc'
-export const inc = { type: INC }
+export const inc = defineAction(INC)
 
 export const ASYNC_INC = 'async-inc'
-export const asyncInc = { type: ASYNC_INC }
+export const asyncInc = defineAction(ASYNC_INC)
 
 export const SET_COUNT = 'set-count'
 export const setCount = defineAction(SET_COUNT, 'count')
