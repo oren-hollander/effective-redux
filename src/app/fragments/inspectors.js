@@ -1,5 +1,5 @@
 import React from 'react'
-import { map, isEmpty, compose, uniqBy, sortBy, reject, concat, flow, get, eq, find, isUndefined } from 'lodash/fp'
+import { map, isEmpty, compose, uniqBy, sortBy, reject, concat, flow, get, eq, find, isUndefined, curry } from 'lodash/fp'
 import { defineAction, createAction } from '../../util/actionDefinition'
 import { fragment } from '../../effective/fragment'
 import { bindAction } from '../../util/bindAction'
@@ -17,10 +17,13 @@ const UPDATE_INSPECTOR = 'update-inspector'
 export const updateInspector = bindAction(inspectorsFragmentId, defineAction(UPDATE_INSPECTOR, 'componentClassId', 'value'))
 
 const CLOSE_INSPSCTOR = 'close-inspector'
-const closeInspector = defineAction(CLOSE_INSPSCTOR, 'componentClassId')
+export const closeInspector = bindAction(inspectorsFragmentId, defineAction(CLOSE_INSPSCTOR, 'componentClassId'))
 
 const CLOSE_ALL_INSPSCTORS = 'close-all-inspectors'
 export const closeAllInspectors = bindAction(inspectorsFragmentId, defineAction(CLOSE_ALL_INSPSCTORS))
+
+const byKey = curry((key, value) => flow(get(key), eq(value)))
+const byComponentClassId = byKey('componentClassId')
 
 const inspectorsReducer = (inspectors = [], action) => {
   switch (action.type) {
@@ -33,18 +36,18 @@ const inspectorsReducer = (inspectors = [], action) => {
       )
 
     case UPDATE_INSPECTOR:
-      const inspector = find(inspector => inspector.componentClassId === action.componentClassId, inspectors)
+      const inspector = find(byComponentClassId(action.componentClassId), inspectors)
       if(isUndefined(inspector))
         return inspectors
       else 
         return flow(
-          reject(inspector => inspector.componentClassId === action.componentClassId),
+          reject(byComponentClassId(action.componentClassId)),
           flip(concat)({ ...inspector, value: action.value }),
           sortBy('componentClassId')
         )(inspectors)
 
     case CLOSE_INSPSCTOR:
-      return reject(flow(get('componentClassId'), eq(action.componentClassId)), inspectors)
+      return reject(byComponentClassId(action.componentClassId), inspectors)
     
     case CLOSE_ALL_INSPSCTORS:
       return []

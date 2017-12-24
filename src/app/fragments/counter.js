@@ -2,18 +2,17 @@ import React from 'react'
 import { compose } from 'recompose'
 import { Button } from '../../ui/button'
 import { TextInput } from '../../ui/textInput'
-import { fragment } from '../../effective/fragment'
+import { fragment, MOUNT, UNMOUNT } from '../../effective/fragment'
 import { mapStateToProps } from '../../effective/mapStateToProps'
 import { effect } from '../../effective/effect'
 import { interval } from '../../effective/subscriptions/interval'
-import { combineSubscriptions } from '../../effective/subscriptions/combineSubscriptions'
 import { delay } from '../../util/delay'
 import { noAction } from '../../util/noAction'
 import { command, batch } from '../../effective/command'
 import { dispatchAction } from '../../effective/commands/dispatchAction'
 import { createAction, defineAction } from '../../util/actionDefinition'
 import { openPanel } from './panels'
-import { openInspector, updateInspector } from './inspectors'
+import { openInspector, updateInspector, closeInspector } from './inspectors'
 import { bindAction } from '../../util/bindAction'
 import { intToString, stringToInt } from '../../util/stringConversion'
 
@@ -28,9 +27,6 @@ const setCount = defineAction(SET_COUNT, 'count')
 
 const OPEN_EDIT_PANEL = 'open-edit-panel'
 const openEditPanel = defineAction(OPEN_EDIT_PANEL)
-
-const REGISTER_PANEL = 'register-panel'
-const registerPanel = defineAction(REGISTER_PANEL)
 
 const incAsync = command(async count => {
   await delay(1000)
@@ -74,12 +70,15 @@ export const reducer = (count = 9, action, { onChange, color, fragmentId }) => {
         dispatchAction(createAction(updateInspector, counterEditorComponentClassId(fragmentId), intToString(action.count)))
       )
 
-    case REGISTER_PANEL: 
+    case MOUNT: 
       return effect(
         count, 
-        registerCounterEditorCommand(fragmentId)
+        registerCounterEditorCommand(fragmentId),
       )
 
+    case UNMOUNT:
+      return effect(count, dispatchAction(createAction(closeInspector, counterEditorComponentClassId(fragmentId))))
+      
     case OPEN_EDIT_PANEL:
       return effect(count, dispatchAction(
           createAction(openPanel, 
@@ -115,14 +114,14 @@ export const CounterView = ({name, count, color, fragmentId}) =>
     </div>
   </div> 
 
-const subscriptions = combineSubscriptions(
-  interval(100000, inc),
-  dispatch => {
-    dispatch(registerPanel)
-  }
-) 
+// const subscriptions = combineSubscriptions(
+  // interval(100000, inc),
+  // dispatch => {
+    // dispatch(registerPanel)
+  // }
+// ) 
 
 export const Counter = compose(
-  fragment(reducer, subscriptions),
+  fragment(reducer, interval(100000, inc)),
   mapStateToProps(state => ({ count: state }))
 )(CounterView)

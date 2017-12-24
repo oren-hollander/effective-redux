@@ -7,10 +7,18 @@ import { bindAction } from '../util/bindAction'
 import { fragmentStore } from './fragmentStore'
 import { renderSchedulerType, fragmentStorePropType, storePropType, fragmentReducersPropType } from './propTypes'
 import { renderScheduler } from './hierarchicalRenderScheduler'
+import { defineAction } from '../util/actionDefinition'
 
 const fragmentIdGenerator = idGenerator('fragment-')
 
-export const fragment = (reducer, subscriptions = noop) => View => class Comp extends PureComponent {
+export const MOUNT = 'mount'
+const mount = defineAction(MOUNT)
+
+export const UNMOUNT = 'unmount'
+const unmount = defineAction(UNMOUNT)
+
+
+export const fragment =  (reducer, subscriptions = noop) => View => class Comp extends PureComponent {
 
   static contextTypes = {
     store: storePropType,
@@ -44,7 +52,10 @@ export const fragment = (reducer, subscriptions = noop) => View => class Comp ex
 
     this.fragmentStore = fragmentStore(this.fragmentId, this.context.store)
     this.context.fragmentReducers.install(this.fragmentId, reducer, this.fragmentStore.dispatch, this.getViewProps)
+    
     subscriptions(this.fragmentStore.dispatch)
+
+    this.fragmentStore.dispatch(mount)
     
     this.renderScheduler = renderScheduler(this.context.renderScheduler.scheduleChild)
     this.update = breaker(this.forceUpdate.bind(this))
@@ -56,8 +67,9 @@ export const fragment = (reducer, subscriptions = noop) => View => class Comp ex
   }
 
   componentWillUnmount() {
-    this.context.fragmentReducers.uninstall(this.fragmentId, this.props.persistFragment)
     this.unsubscribe()
+    this.fragmentStore.dispatch(unmount)
+    this.context.fragmentReducers.uninstall(this.fragmentId, this.props.persistFragment)
   }
 
   getChildContext() {
