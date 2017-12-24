@@ -13,7 +13,7 @@ import { service } from './effective/services/service'
 
 const AppWithProps = mapStateToProps(state => ({count: selectCount(state), color: selectColor(state)}))(App)
 
-const subscriptions = interval(2000, asyncInc)
+const subscriptions = interval(200000, asyncInc)
 const services = [service('componentClassRegistry', componentClassRegistry(), true)]
 application('root', AppWithProps, reducer, subscriptions, services, localStateStorage)
 
