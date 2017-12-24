@@ -1,5 +1,5 @@
 import React from 'react'
-import { map, isEmpty, compose, uniqBy, reject, concat, flow, get, eq, find, isUndefined } from 'lodash/fp'
+import { map, isEmpty, compose, uniqBy, sortBy, reject, concat, flow, get, eq, find, isUndefined } from 'lodash/fp'
 import { defineAction, createAction } from '../../util/actionDefinition'
 import { fragment } from '../../effective/fragment'
 import { bindAction } from '../../util/bindAction'
@@ -25,7 +25,12 @@ export const closeAllInspectors = bindAction(inspectorsFragmentId, defineAction(
 const inspectorsReducer = (inspectors = [], action) => {
   switch (action.type) {
     case OPEN_INSPECTOR:
-      return uniqBy('componentClassId', [...inspectors, { componentClassId: action.componentClassId, name: action.name, value: action.value, onUpdate: action.onUpdate }])
+      return flow(
+        uniqBy('componentClassId'),
+        sortBy('componentClassId')
+      )( 
+        [...inspectors, { componentClassId: action.componentClassId, name: action.name, value: action.value, onUpdate: action.onUpdate }]
+      )
 
     case UPDATE_INSPECTOR:
       const inspector = find(inspector => inspector.componentClassId === action.componentClassId, inspectors)
@@ -34,7 +39,8 @@ const inspectorsReducer = (inspectors = [], action) => {
       else 
         return flow(
           reject(inspector => inspector.componentClassId === action.componentClassId),
-          flip(concat)({ ...inspector, value: action.value })
+          flip(concat)({ ...inspector, value: action.value }),
+          sortBy('componentClassId')
         )(inspectors)
 
     case CLOSE_INSPSCTOR:
